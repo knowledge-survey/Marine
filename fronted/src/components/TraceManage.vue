@@ -8,7 +8,7 @@
       </template>
 
       <el-tabs v-model="activeTab" class="trace-tabs">
-        <el-tab-pane label="生成溯源码" name="generate">
+        <el-tab-pane label="生成溯源码" name="generate" lazy>
           <div class="generate-section">
             <el-form label-width="100px" class="generate-form">
               <el-form-item label="选择批次">
@@ -78,7 +78,7 @@
           </div>
         </el-tab-pane>
 
-        <el-tab-pane label="溯源查询" name="query">
+        <el-tab-pane label="溯源查询" name="query" lazy>
           <div class="query-bar">
             <el-input
               v-model="queryCode"
@@ -207,20 +207,22 @@
           </div>
         </el-tab-pane>
 
-        <el-tab-pane label="溯源码列表" name="list">
-          <el-table :data="traceCodeList" border class="data-table" v-loading="listLoading">
-            <el-table-column prop="code" label="溯源码" width="280" />
-            <el-table-column prop="batchNo" label="批次号" width="160" />
-            <el-table-column prop="description" label="描述" />
-            <el-table-column prop="createTime" label="创建时间" width="180" />
-            <el-table-column prop="scanCount" label="扫描次数" width="100" />
-            <el-table-column label="操作" width="200">
-              <template #default="{ row }">
-                <el-button size="small" @click="viewTraceCode(row)">查看</el-button>
-                <el-button size="small" type="primary" @click="showQrCode(row)">二维码</el-button>
-              </template>
-            </el-table-column>
-          </el-table>
+        <el-tab-pane label="溯源码列表" name="list" lazy>
+          <div class="table-wrapper">
+            <el-table :data="traceCodeList" border class="data-table" v-loading="listLoading">
+              <el-table-column prop="code" label="溯源码" width="280" />
+              <el-table-column prop="batchNo" label="批次号" width="160" />
+              <el-table-column prop="description" label="描述" />
+              <el-table-column prop="createTime" label="创建时间" width="180" />
+              <el-table-column prop="scanCount" label="扫描次数" width="100" />
+              <el-table-column label="操作" width="200">
+                <template #default="{ row }">
+                  <el-button size="small" @click="viewTraceCode(row)">查看</el-button>
+                  <el-button size="small" type="primary" @click="showQrCode(row)">二维码</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
         </el-tab-pane>
       </el-tabs>
     </el-card>
@@ -305,7 +307,7 @@ export default {
         const res = await generateTraceabilityForBatch(selectedBatch.value)
         generatedCode.value = res.data
         qrCodeUrl.value = getQrCodeUrl(res.data.code)
-        traceLink.value = `http://localhost:5173/traceability/${res.data.code}`
+        traceLink.value = `http://localhost:8080/traceability/${res.data.code}`
         ElMessage.success('溯源码生成成功')
       } catch (error) {
         console.error('生成失败:', error)
@@ -351,6 +353,8 @@ export default {
         traceCodeList.value = res.data || []
       } catch (error) {
         console.error('加载溯源码列表失败:', error)
+        ElMessage.error('加载溯源码列表失败: ' + (error.response?.data?.message || error.message || '未知错误'))
+        traceCodeList.value = []
       } finally {
         listLoading.value = false
       }
@@ -558,8 +562,14 @@ export default {
   margin-bottom: 0;
 }
 
+.table-wrapper {
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 212, 255, 0.2);
+}
+
 .data-table :deep(.el-table) {
-  background-color: transparent !important;
+  background-color: rgba(10, 25, 40, 0.9) !important;
 }
 
 .data-table :deep(.el-table__header-wrapper th) {
@@ -568,10 +578,36 @@ export default {
   font-weight: 600;
 }
 
+.data-table :deep(.el-table__body-wrapper) {
+  background-color: rgba(10, 25, 40, 0.9) !important;
+}
+
+.data-table :deep(.el-table__row) {
+  background-color: transparent !important;
+}
+
+.data-table :deep(.el-table__row:hover) {
+  background-color: rgba(0, 212, 255, 0.05) !important;
+}
+
 .data-table :deep(.el-table__cell) {
   background-color: transparent !important;
   color: #fff !important;
   border-color: rgba(0, 212, 255, 0.1) !important;
+}
+
+.data-table :deep(.el-table--border::after),
+.data-table :deep(.el-table--border::before),
+.data-table :deep(.el-table__inner-wrapper::before) {
+  background-color: rgba(0, 212, 255, 0.1) !important;
+}
+
+.data-table :deep(.el-table__empty-block) {
+  background-color: rgba(10, 25, 40, 0.9) !important;
+}
+
+.data-table :deep(.el-table__empty-text) {
+  color: rgba(255, 255, 255, 0.5) !important;
 }
 
 .temp-value { color: #ff6b35; }

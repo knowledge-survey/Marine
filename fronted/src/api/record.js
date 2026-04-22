@@ -77,5 +77,5 @@ export const generateTraceabilityForBatch = (batchNo) => {
 }
 
 export const getQrCodeUrl = (code) => {
-  return `http://localhost:8081/api/traceability/qrcode/${code}`
+  return `http://localhost:8080/api/traceability/qrcode/${code}`
 }

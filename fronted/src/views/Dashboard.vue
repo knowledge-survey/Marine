@@ -241,24 +241,52 @@ export default {
   color: rgba(255, 255, 255, 0.7);
 }
 
+.zone-tree {
+  background: transparent;
+  padding: 8px;
+}
+
 .zone-tree :deep(.el-tree-node__content) {
-  color: rgba(255, 255, 255, 0.8);
-  border-radius: 6px;
-  transition: all 0.3s;
-  padding: 6px 10px;
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  margin: 2px 0;
+  height: auto;
+  background: transparent;
 }
 
 .zone-tree :deep(.el-tree-node__content:hover) {
-  background: rgba(0, 212, 255, 0.1);
-}
-
-.zone-tree :deep(.el-tree-node.is-current > .el-tree-node__content) {
-  background: rgba(0, 212, 255, 0.2);
+  background: linear-gradient(90deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 212, 255, 0.05) 100%);
   color: #00d4ff;
 }
 
+.zone-tree :deep(.el-tree-node.is-current > .el-tree-node__content) {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.25) 0%, rgba(0, 150, 200, 0.15) 100%);
+  color: #00d4ff;
+  box-shadow: 0 2px 8px rgba(0, 212, 255, 0.15);
+  font-weight: 500;
+}
+
 .zone-tree :deep(.el-tree-node__expand-icon) {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(0, 212, 255, 0.7);
+  transition: all 0.3s ease;
+}
+
+.zone-tree :deep(.el-tree-node__expand-icon:hover) {
+  color: #00d4ff;
+}
+
+.zone-tree :deep(.el-tree-node__label) {
+  font-size: 14px;
+}
+
+.zone-tree :deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.25) 0%, rgba(0, 150, 200, 0.15) 100%);
+}
+
+.zone-tree :deep(.el-tree-node.is-expanded > .el-tree-node__children) {
+  padding-left: 8px;
 }
 
 .main-content {

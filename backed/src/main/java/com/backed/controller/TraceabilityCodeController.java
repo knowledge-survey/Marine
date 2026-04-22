@@ -20,8 +20,8 @@ public class TraceabilityCodeController {
     @Autowired
     private TraceabilityCodeService traceabilityCodeService;
 
-    @Value("${traceability.base-url:http://localhost:8081}")
-    private String baseUrl;
+    @Value("${traceability.frontend-url:http://localhost:8080}")
+    private String frontendUrl;
 
     @GetMapping
     public ResponseEntity<List<TraceabilityCode>> getAll() {
@@ -57,12 +57,13 @@ public class TraceabilityCodeController {
     @GetMapping("/qrcode/{code}")
     public ResponseEntity<byte[]> getQrCode(@PathVariable String code) {
         try {
-            byte[] image = traceabilityCodeService.generateQrCodeImage(code, baseUrl);
+            byte[] image = traceabilityCodeService.generateQrCodeImage(code, frontendUrl);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.IMAGE_PNG);
-            headers.setContentDispositionFormData("attachment", code + ".png");
+            headers.setCacheControl("no-store, no-cache, must-revalidate");
             return new ResponseEntity<>(image, headers, HttpStatus.OK);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

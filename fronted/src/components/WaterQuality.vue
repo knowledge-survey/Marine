@@ -23,7 +23,7 @@
         <el-col :span="6">
           <div class="stat-card do-card">
             <div class="stat-icon">
-              <el-icon :size="40"><WaterDrop /></el-icon>
+              <el-icon :size="40"><Sunny /></el-icon>
             </div>
             <div class="stat-content">
               <div class="stat-label">溶解氧</div>
@@ -174,12 +174,12 @@
 import { ref, watch, onMounted, nextTick, computed } from 'vue'
 import * as echarts from 'echarts'
 import { getWaterQualityByZone, getLatestWaterQuality, createWaterQuality } from '@/api/waterQuality'
-import { Sunny, WaterDrop, Document, TrendCharts } from '@element-plus/icons-vue'
+import { Sunny, Document, TrendCharts } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
 export default {
   name: 'WaterQuality',
-  components: { Sunny, WaterDrop, Document, TrendCharts },
+  components: { Sunny, Document, TrendCharts },
   props: ['zoneId'],
   setup(props) {
     const trendChartRef = ref(null)
@@ -803,21 +803,109 @@ export default {
 .add-dialog :deep(.el-dialog) {
   background: rgba(20, 40, 60, 0.95) !important;
   border: 1px solid rgba(0, 212, 255, 0.3) !important;
+  border-radius: 12px !important;
 }
 
 .add-dialog :deep(.el-dialog__header) {
   border-bottom: 1px solid rgba(0, 212, 255, 0.2) !important;
+  background: transparent !important;
 }
 
 .add-dialog :deep(.el-dialog__title) {
   color: #00d4ff !important;
 }
 
+.add-dialog :deep(.el-dialog__close) {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.add-dialog :deep(.el-dialog__close:hover) {
+  color: #00d4ff !important;
+}
+
+.add-dialog :deep(.el-dialog__body) {
+  background: transparent !important;
+}
+
+.add-dialog :deep(.el-dialog__footer) {
+  border-top: 1px solid rgba(0, 212, 255, 0.15) !important;
+  background: transparent !important;
+}
+
 .add-form :deep(.el-form-item__label) {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 40px;
+}
+
+.add-form :deep(.el-form-item) {
+  margin-bottom: 20px;
+}
+
+.add-form :deep(.el-form-item__content) {
+  justify-content: flex-start;
+}
+
+.add-form :deep(.el-input__wrapper) {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.add-form :deep(.el-input__wrapper:hover) {
+  border-color: rgba(0, 212, 255, 0.4) !important;
+}
+
+.add-form :deep(.el-input__wrapper.is-focus) {
+  border-color: #00d4ff !important;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2) !important;
+}
+
+.add-form :deep(.el-input__inner) {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.add-form :deep(.el-input__inner::placeholder) {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.add-form :deep(.el-input-number__decrease),
+.add-form :deep(.el-input-number__increase) {
+  background-color: rgba(0, 212, 255, 0.1) !important;
+  color: #00d4ff !important;
+  border-color: rgba(0, 212, 255, 0.2) !important;
+}
+
+.add-form :deep(.el-input-number .el-input__wrapper) {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+}
+
+.add-dialog :deep(.el-button) {
+  border-radius: 8px !important;
+}
+
+.add-dialog :deep(.el-button--default) {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.add-dialog :deep(.el-button--default:hover) {
+  background: rgba(255, 255, 255, 0.15) !important;
   color: #fff !important;
 }
 
-.full-width {
-  width: 100%;
+.add-dialog :deep(.el-button--primary) {
+  background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4) !important;
+}
+
+.add-dialog :deep(.el-button--primary:hover) {
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6) !important;
 }
 </style>

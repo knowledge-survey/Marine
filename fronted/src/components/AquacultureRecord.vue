@@ -8,8 +8,8 @@
         </div>
       </template>
 
-      <el-tabs v-model="activeTab" class="record-tabs" @tab-change="handleTabChange">
-        <el-tab-pane label="苗种投放" name="seedling">
+      <el-tabs v-model="activeTab" class="record-tabs">
+        <el-tab-pane label="苗种投放" name="seedling" lazy>
           <div class="action-bar">
             <el-button type="primary" @click="showSeedlingDialog" :disabled="!zoneId" class="add-btn">
               添加记录
@@ -25,7 +25,7 @@
           </el-table>
         </el-tab-pane>
 
-        <el-tab-pane label="饲料投喂" name="feeding">
+        <el-tab-pane label="饲料投喂" name="feeding" lazy>
           <div class="action-bar">
             <el-button type="primary" @click="showFeedingDialog" :disabled="!zoneId" class="add-btn">
               添加记录
@@ -39,7 +39,7 @@
           </el-table>
         </el-tab-pane>
 
-        <el-tab-pane label="捕捞记录" name="harvest">
+        <el-tab-pane label="捕捞记录" name="harvest" lazy>
           <div class="action-bar">
             <el-button type="primary" @click="showHarvestDialog" :disabled="!zoneId" class="add-btn">
               添加记录
@@ -56,7 +56,7 @@
       </el-tabs>
     </el-card>
 
-    <el-dialog v-model="seedlingDialogVisible" title="添加苗种记录" width="500px" class="add-dialog">
+    <el-dialog v-model="seedlingDialogVisible" title="添加苗种记录" width="500px" custom-class="aquaculture-add-dialog">
       <el-form :model="seedlingForm" label-width="100px" class="add-form">
         <el-form-item label="品种">
           <el-input v-model="seedlingForm.species" class="full-width" />
@@ -87,7 +87,7 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="feedingDialogVisible" title="添加投喂记录" width="500px" class="add-dialog">
+    <el-dialog v-model="feedingDialogVisible" title="添加投喂记录" width="500px" custom-class="aquaculture-add-dialog">
       <el-form :model="feedingForm" label-width="100px" class="add-form">
         <el-form-item label="饲料类型">
           <el-input v-model="feedingForm.feedType" class="full-width" />
@@ -108,7 +108,7 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="harvestDialogVisible" title="添加捕捞记录" width="500px" class="add-dialog">
+    <el-dialog v-model="harvestDialogVisible" title="添加捕捞记录" width="500px" custom-class="aquaculture-add-dialog">
       <el-form :model="harvestForm" label-width="100px" class="add-form">
         <el-form-item label="品种">
           <el-input v-model="harvestForm.species" class="full-width" />
@@ -135,7 +135,7 @@
 </template>
 
 <script>
-import { ref, watch, onMounted, nextTick } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { getSeedlingsByZone, getFeedingByZone, getHarvestByZone, createSeedling, createFeeding, createHarvest } from '@/api/record'
 import { ElMessage } from 'element-plus'
 
@@ -164,7 +164,6 @@ export default {
         harvestList.value = []
         return
       }
-      
       loading.value = true
       try {
         const [seedlingRes, feedingRes, harvestRes] = await Promise.all([
@@ -177,15 +176,10 @@ export default {
         harvestList.value = harvestRes.data || []
       } catch (error) {
         console.error('加载数据失败:', error)
-        ElMessage.error('加载数据失败')
+        ElMessage.error('加载数据失败: ' + (error.response?.data?.message || error.message || '未知错误'))
       } finally {
         loading.value = false
       }
-    }
-
-    const handleTabChange = () => {
-      nextTick(() => {
-      })
     }
 
     const showSeedlingDialog = () => {
@@ -343,8 +337,7 @@ export default {
       generateBatchNo,
       addSeedling,
       addFeeding,
-      addHarvest,
-      handleTabChange
+      addHarvest
     }
   }
 }
@@ -406,44 +399,442 @@ export default {
   box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
 }
 
+.data-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
 .data-table :deep(.el-table) {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+}
+
+.data-table :deep(.el-table::before) {
   background-color: transparent !important;
+}
+
+.data-table :deep(.el-table__header-wrapper) {
+  background-color: rgba(10, 25, 40, 0.9) !important;
+}
+
+.data-table :deep(.el-table__header) {
+  background-color: rgba(10, 25, 40, 0.9) !important;
 }
 
 .data-table :deep(.el-table__header-wrapper th) {
-  background-color: rgba(0, 212, 255, 0.1) !important;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 119, 255, 0.1) 100%) !important;
   color: #00d4ff !important;
   font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid rgba(0, 212, 255, 0.3) !important;
+  padding: 12px 0;
+}
+
+.data-table :deep(.el-table__body-wrapper) {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+}
+
+.data-table :deep(.el-table__body) {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+}
+
+.data-table :deep(.el-table__row) {
+  background-color: rgba(10, 25, 40, 0.8) !important;
 }
 
 .data-table :deep(.el-table__cell) {
-  background-color: transparent !important;
-  color: #fff !important;
-  border-color: rgba(0, 212, 255, 0.1) !important;
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(0, 212, 255, 0.08) !important;
+  padding: 10px 0;
+  font-size: 13px;
 }
 
-.data-table :deep(.el-table__row:hover) {
-  background-color: rgba(0, 212, 255, 0.05) !important;
+.data-table :deep(.el-table__row:hover > .el-table__cell) {
+  background-color: rgba(0, 212, 255, 0.08) !important;
+  color: #00d4ff !important;
 }
 
+.data-table :deep(.el-table__empty-block) {
+  background-color: rgba(10, 25, 40, 0.5) !important;
+}
+
+.data-table :deep(.el-table__empty-text) {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ===== Dialog Dark Theme ===== */
 .add-dialog :deep(.el-dialog) {
   background: rgba(20, 40, 60, 0.95) !important;
   border: 1px solid rgba(0, 212, 255, 0.3) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(10px);
+}
+
+.add-dialog :deep(.el-overlay) {
+  background-color: rgba(0, 0, 0, 0.5) !important;
 }
 
 .add-dialog :deep(.el-dialog__header) {
   border-bottom: 1px solid rgba(0, 212, 255, 0.2) !important;
+  background: transparent !important;
+  padding: 20px;
 }
 
 .add-dialog :deep(.el-dialog__title) {
   color: #00d4ff !important;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.add-dialog :deep(.el-dialog__close) {
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 18px;
+}
+
+.add-dialog :deep(.el-dialog__close:hover) {
+  color: #00d4ff !important;
+}
+
+.add-dialog :deep(.el-dialog__body) {
+  background: transparent !important;
+  padding: 20px;
+}
+
+.add-dialog :deep(.el-dialog__footer) {
+  border-top: 1px solid rgba(0, 212, 255, 0.15) !important;
+  background: transparent !important;
+  padding: 15px 20px;
 }
 
 .add-form :deep(.el-form-item__label) {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 40px;
+  text-align: right;
+  padding-right: 12px;
+}
+
+.add-form :deep(.el-form-item) {
+  margin-bottom: 20px;
+}
+
+.add-form :deep(.el-form-item__content) {
+  justify-content: flex-start;
+}
+
+/* Input fields */
+.add-form :deep(.el-input__wrapper) {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  transition: all 0.3s ease;
+}
+
+.add-form :deep(.el-input__wrapper:hover) {
+  border-color: rgba(0, 212, 255, 0.4) !important;
+}
+
+.add-form :deep(.el-input__wrapper.is-focus) {
+  border-color: #00d4ff !important;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2) !important;
+}
+
+.add-form :deep(.el-input__inner) {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 14px;
+}
+
+.add-form :deep(.el-input__inner::placeholder) {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Textarea */
+.add-form :deep(.el-textarea__inner) {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  border-radius: 8px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: none !important;
+  transition: all 0.3s ease;
+}
+
+.add-form :deep(.el-textarea__inner:hover) {
+  border-color: rgba(0, 212, 255, 0.4) !important;
+}
+
+.add-form :deep(.el-textarea__inner:focus) {
+  border-color: #00d4ff !important;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2) !important;
+}
+
+.add-form :deep(.el-textarea__inner::placeholder) {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Date picker */
+.add-form :deep(.el-date-editor.el-input__wrapper) {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.add-form :deep(.el-date-editor.el-input__wrapper:hover) {
+  border-color: rgba(0, 212, 255, 0.4) !important;
+}
+
+.add-form :deep(.el-date-editor .el-input__inner) {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.add-form :deep(.el-input__icon) {
+  color: rgba(0, 212, 255, 0.6) !important;
+}
+
+/* Number input */
+.add-form :deep(.el-input-number__decrease),
+.add-form :deep(.el-input-number__increase) {
+  background-color: rgba(0, 212, 255, 0.1) !important;
+  color: #00d4ff !important;
+  border-color: rgba(0, 212, 255, 0.2) !important;
+}
+
+.add-form :deep(.el-input-number__decrease:hover),
+.add-form :deep(.el-input-number__increase:hover) {
+  background-color: rgba(0, 212, 255, 0.2) !important;
+  color: #00d4ff !important;
+}
+
+.add-form :deep(.el-input-number .el-input__wrapper) {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+}
+
+/* Input group append (for batch number generator) */
+.add-form :deep(.el-input-group__append) {
+  background-color: rgba(0, 212, 255, 0.1) !important;
+  border-color: rgba(0, 212, 255, 0.2) !important;
+}
+
+.add-form :deep(.el-input-group__append .el-button) {
+  background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%) !important;
+  border: none !important;
   color: #fff !important;
+  border-radius: 0 6px 6px 0 !important;
+}
+
+/* Buttons */
+.add-dialog :deep(.el-button) {
+  border-radius: 8px !important;
+  padding: 8px 20px;
+  font-weight: 500;
+}
+
+.add-dialog :deep(.el-button--default) {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.add-dialog :deep(.el-button--default:hover) {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.add-dialog :deep(.el-button--primary) {
+  background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4) !important;
+}
+
+.add-dialog :deep(.el-button--primary:hover) {
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6) !important;
+  transform: translateY(-1px);
 }
 
 .full-width {
   width: 100%;
+}
+</style>
+
+<style>
+/* Global dialog styles - must be unscoped for teleported dialogs */
+.aquaculture-add-dialog .el-dialog {
+  background: rgba(20, 40, 60, 0.95) !important;
+  border: 1px solid rgba(0, 212, 255, 0.3) !important;
+  border-radius: 12px !important;
+  backdrop-filter: blur(10px);
+}
+
+.aquaculture-add-dialog .el-overlay {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.aquaculture-add-dialog .el-dialog__header {
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2) !important;
+  background: transparent !important;
+  padding: 20px !important;
+}
+
+.aquaculture-add-dialog .el-dialog__title {
+  color: #00d4ff !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+.aquaculture-add-dialog .el-dialog__close {
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 18px !important;
+}
+
+.aquaculture-add-dialog .el-dialog__close:hover {
+  color: #00d4ff !important;
+}
+
+.aquaculture-add-dialog .el-dialog__body {
+  background: transparent !important;
+  padding: 20px !important;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.aquaculture-add-dialog .el-dialog__footer {
+  border-top: 1px solid rgba(0, 212, 255, 0.15) !important;
+  background: transparent !important;
+  padding: 15px 20px !important;
+}
+
+.aquaculture-add-dialog .el-form-item__label {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 40px !important;
+  text-align: right !important;
+  padding-right: 12px !important;
+}
+
+.aquaculture-add-dialog .el-input__wrapper {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.aquaculture-add-dialog .el-input__wrapper:hover {
+  border-color: rgba(0, 212, 255, 0.4) !important;
+}
+
+.aquaculture-add-dialog .el-input__wrapper.is-focus {
+  border-color: #00d4ff !important;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2) !important;
+}
+
+.aquaculture-add-dialog .el-input__inner {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 14px !important;
+}
+
+.aquaculture-add-dialog .el-input__inner::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.aquaculture-add-dialog .el-textarea__inner {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  border-radius: 8px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: none !important;
+}
+
+.aquaculture-add-dialog .el-textarea__inner:hover {
+  border-color: rgba(0, 212, 255, 0.4) !important;
+}
+
+.aquaculture-add-dialog .el-textarea__inner:focus {
+  border-color: #00d4ff !important;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2) !important;
+}
+
+.aquaculture-add-dialog .el-textarea__inner::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.aquaculture-add-dialog .el-date-editor.el-input__wrapper {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.aquaculture-add-dialog .el-date-editor .el-input__inner {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.aquaculture-add-dialog .el-input__icon {
+  color: rgba(0, 212, 255, 0.6) !important;
+}
+
+.aquaculture-add-dialog .el-input-number__decrease,
+.aquaculture-add-dialog .el-input-number__increase {
+  background-color: rgba(0, 212, 255, 0.1) !important;
+  color: #00d4ff !important;
+  border-color: rgba(0, 212, 255, 0.2) !important;
+}
+
+.aquaculture-add-dialog .el-input-number__decrease:hover,
+.aquaculture-add-dialog .el-input-number__increase:hover {
+  background-color: rgba(0, 212, 255, 0.2) !important;
+  color: #00d4ff !important;
+}
+
+.aquaculture-add-dialog .el-input-number .el-input__wrapper {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+}
+
+.aquaculture-add-dialog .el-input-group__append {
+  background-color: rgba(0, 212, 255, 0.1) !important;
+  border-color: rgba(0, 212, 255, 0.2) !important;
+}
+
+.aquaculture-add-dialog .el-input-group__append .el-button {
+  background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%) !important;
+  border: none !important;
+  color: #fff !important;
+  border-radius: 0 6px 6px 0 !important;
+}
+
+.aquaculture-add-dialog .el-button {
+  border-radius: 8px !important;
+  padding: 8px 20px !important;
+  font-weight: 500 !important;
+}
+
+.aquaculture-add-dialog .el-button--default {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.aquaculture-add-dialog .el-button--default:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.aquaculture-add-dialog .el-button--primary {
+  background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4) !important;
+}
+
+.aquaculture-add-dialog .el-button--primary:hover {
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6) !important;
+  transform: translateY(-1px);
 }
 </style>

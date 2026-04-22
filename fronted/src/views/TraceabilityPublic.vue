@@ -33,7 +33,7 @@
             <el-card class="timeline-section-card">
               <template #header>
                 <div class="section-header">
-                  <el-icon><Seedling /></el-icon>
+                  <el-icon><Document /></el-icon>
                   <span>苗种投放</span>
                 </div>
               </template>
@@ -193,7 +193,7 @@
             <el-card class="timeline-section-card">
               <template #header>
                 <div class="section-header">
-                  <el-icon><WaterDrop /></el-icon>
+                  <el-icon><Grid /></el-icon>
                   <span>水质监测 (最近7条)</span>
                 </div>
               </template>
@@ -262,11 +262,11 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getPublicTraceabilityInfo } from '@/api/record'
-import { Loading, Warning, Seedling, Location, Food, FirstAidKit, WaterDrop, Coin } from '@element-plus/icons-vue'
+import { Loading, Warning, Location, Food, FirstAidKit, Coin, Grid, Document } from '@element-plus/icons-vue'
 
 export default {
   name: 'TraceabilityPublic',
-  components: { Loading, Warning, Seedling, Location, Food, FirstAidKit, WaterDrop, Coin },
+  components: { Loading, Warning, Location, Food, FirstAidKit, Coin, Grid, Document },
   setup() {
     const route = useRoute()
     const traceResult = ref(null)
