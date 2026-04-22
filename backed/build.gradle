@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.3.8'  // 改这里
+	id 'org.springframework.boot' version '3.3.8'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -9,9 +9,8 @@ version = '0.0.1-SNAPSHOT'
 description = 'backed'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(19)
-	}
+	sourceCompatibility = '19'
+	targetCompatibility = '19'
 }
 
 repositories {
@@ -20,6 +19,13 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	runtimeOnly 'org.xerial:sqlite-jdbc'
+	implementation 'com.baomidou:mybatis-plus-spring-boot3-starter:3.5.10.1'
+	implementation 'org.projectlombok:lombok'
+	implementation 'com.google.zxing:core:3.5.3'
+	implementation 'com.google.zxing:javase:3.5.3'
+	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
