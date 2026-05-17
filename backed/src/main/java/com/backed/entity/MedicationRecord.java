@@ -1,6 +1,7 @@
 package com.backed.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -27,6 +28,7 @@ public class MedicationRecord {
     private String dosageUnit;
 
     @TableField("medication_date")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private LocalDate medicationDate;
 
     @TableField("effect")

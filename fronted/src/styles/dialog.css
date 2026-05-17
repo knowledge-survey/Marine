@@ -1,0 +1,207 @@
+/* Element Plus Dialog 全局样式 - 处理 Teleport 到 body 的问题 */
+
+/* 所有对话框共用的样式 */
+.add-dialog.el-dialog,
+.aquaculture-add-dialog.el-dialog,
+.qr-dialog.el-dialog {
+  background: rgba(20, 40, 60, 0.95) !important;
+  border: 1px solid rgba(0, 212, 255, 0.3) !important;
+  border-radius: 12px !important;
+}
+
+/* 对话框头部 */
+.add-dialog .el-dialog__header,
+.aquaculture-add-dialog .el-dialog__header,
+.qr-dialog .el-dialog__header {
+  border-bottom: 1px solid rgba(0, 212, 255, 0.2) !important;
+  background: transparent !important;
+  padding: 20px !important;
+}
+
+.add-dialog .el-dialog__title,
+.aquaculture-add-dialog .el-dialog__title,
+.qr-dialog .el-dialog__title {
+  color: #00d4ff !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+.add-dialog .el-dialog__close,
+.aquaculture-add-dialog .el-dialog__close,
+.qr-dialog .el-dialog__close {
+  color: rgba(255, 255, 255, 0.6) !important;
+  font-size: 18px !important;
+}
+
+.add-dialog .el-dialog__close:hover,
+.aquaculture-add-dialog .el-dialog__close:hover,
+.qr-dialog .el-dialog__close:hover {
+  color: #00d4ff !important;
+}
+
+/* 对话框内容 */
+.add-dialog .el-dialog__body,
+.aquaculture-add-dialog .el-dialog__body,
+.qr-dialog .el-dialog__body {
+  background: transparent !important;
+  padding: 20px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* 对话框底部 */
+.add-dialog .el-dialog__footer,
+.aquaculture-add-dialog .el-dialog__footer,
+.qr-dialog .el-dialog__footer {
+  border-top: 1px solid rgba(0, 212, 255, 0.15) !important;
+  background: transparent !important;
+  padding: 15px 20px !important;
+}
+
+/* ===== 关键修复：表单标签强制白色显示 ===== */
+.add-dialog .el-form-item__label,
+.aquaculture-add-dialog .el-form-item__label {
+  color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  line-height: 40px !important;
+  text-align: right !important;
+  padding-right: 12px !important;
+  opacity: 1 !important;
+  display: inline-block !important;
+}
+
+/* 输入框样式 */
+.add-dialog .el-input__wrapper,
+.aquaculture-add-dialog .el-input__wrapper {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.add-dialog .el-input__wrapper:hover,
+.aquaculture-add-dialog .el-input__wrapper:hover {
+  border-color: rgba(0, 212, 255, 0.4) !important;
+}
+
+.add-dialog .el-input__wrapper.is-focus,
+.aquaculture-add-dialog .el-input__wrapper.is-focus {
+  border-color: #00d4ff !important;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2) !important;
+}
+
+.add-dialog .el-input__inner,
+.aquaculture-add-dialog .el-input__inner {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-size: 14px !important;
+}
+
+.add-dialog .el-input__inner::placeholder,
+.aquaculture-add-dialog .el-input__inner::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 文本域样式 */
+.add-dialog .el-textarea__inner,
+.aquaculture-add-dialog .el-textarea__inner {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  border-radius: 8px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: none !important;
+}
+
+.add-dialog .el-textarea__inner:hover,
+.aquaculture-add-dialog .el-textarea__inner:hover {
+  border-color: rgba(0, 212, 255, 0.4) !important;
+}
+
+.add-dialog .el-textarea__inner:focus,
+.aquaculture-add-dialog .el-textarea__inner:focus {
+  border-color: #00d4ff !important;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2) !important;
+}
+
+.add-dialog .el-textarea__inner::placeholder,
+.aquaculture-add-dialog .el-textarea__inner::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 日期选择器 */
+.add-dialog .el-date-editor.el-input__wrapper,
+.aquaculture-add-dialog .el-date-editor.el-input__wrapper {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.add-dialog .el-date-editor .el-input__inner,
+.aquaculture-add-dialog .el-date-editor .el-input__inner {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.add-dialog .el-input__icon,
+.aquaculture-add-dialog .el-input__icon {
+  color: rgba(0, 212, 255, 0.6) !important;
+}
+
+/* 数字输入框 */
+.add-dialog .el-input-number__decrease,
+.add-dialog .el-input-number__increase,
+.aquaculture-add-dialog .el-input-number__decrease,
+.aquaculture-add-dialog .el-input-number__increase {
+  background-color: rgba(0, 212, 255, 0.1) !important;
+  color: #00d4ff !important;
+  border-color: rgba(0, 212, 255, 0.2) !important;
+}
+
+.add-dialog .el-input-number__decrease:hover,
+.add-dialog .el-input-number__increase:hover,
+.aquaculture-add-dialog .el-input-number__decrease:hover,
+.aquaculture-add-dialog .el-input-number__increase:hover {
+  background-color: rgba(0, 212, 255, 0.2) !important;
+  color: #00d4ff !important;
+}
+
+.add-dialog .el-input-number .el-input__wrapper,
+.aquaculture-add-dialog .el-input-number .el-input__wrapper {
+  background-color: rgba(10, 25, 40, 0.8) !important;
+  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+}
+
+/* 按钮样式 */
+.add-dialog .el-button,
+.aquaculture-add-dialog .el-button {
+  border-radius: 8px !important;
+  padding: 8px 20px !important;
+  font-weight: 500 !important;
+}
+
+.add-dialog .el-button--default,
+.aquaculture-add-dialog .el-button--default {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.add-dialog .el-button--default:hover,
+.aquaculture-add-dialog .el-button--default:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #fff !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.add-dialog .el-button--primary,
+.aquaculture-add-dialog .el-button--primary {
+  background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%) !important;
+  border: none !important;
+  color: #fff !important;
+  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4) !important;
+}
+
+.add-dialog .el-button--primary:hover,
+.aquaculture-add-dialog .el-button--primary:hover {
+  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6) !important;
+  transform: translateY(-1px);
+}

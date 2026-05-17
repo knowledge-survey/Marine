@@ -1,17 +1,21 @@
 <template>
-  <el-container class="admin-container">
-    <el-header class="admin-header">
+  <div class="admin-root">
+    <div class="admin-header">
       <div class="header-left">
-        <el-icon class="back-icon" @click="$router.push('/dashboard')" title="单击以返回"><ArrowLeft /></el-icon>
-        <h2 class="header-title">系统管理</h2>
+        <el-icon class="back-icon" @click="$router.push('/dashboard')"><ArrowLeft /></el-icon>
+        <div class="brand">
+          <el-icon class="brand-icon"><Setting /></el-icon>
+          <span class="brand-text">系统管理</span>
+        </div>
       </div>
-      <el-button @click="$router.push('/dashboard')" class="back-btn">
-        返回
+      <el-button class="hdr-btn" @click="$router.push('/dashboard')">
+        <el-icon><ArrowLeft /></el-icon>
+        <span class="hdr-btn-text">返回首页</span>
       </el-button>
-    </el-header>
-    <el-container>
-      <el-aside width="220px" class="admin-aside">
-        <el-menu :default-active="activeMenu" @select="handleMenuSelect" class="admin-menu">
+    </div>
+    <div class="admin-body">
+      <div class="admin-aside">
+        <el-menu :default-active="activeMenu" @select="handleMenuSelect" class="side-menu">
           <el-menu-item index="user">
             <el-icon><User /></el-icon>
             <span>用户管理</span>
@@ -20,129 +24,164 @@
             <el-icon><Grid /></el-icon>
             <span>区域管理</span>
           </el-menu-item>
+          <el-menu-item index="trace">
+            <el-icon><CircleCheck /></el-icon>
+            <span>溯源管理</span>
+          </el-menu-item>
         </el-menu>
-      </el-aside>
-      <el-main class="admin-main">
+      </div>
+      <div class="admin-main">
         <component :is="currentComponent" />
-      </el-main>
-    </el-container>
-  </el-container>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import { ref, computed } from 'vue'
 import UserManage from '@/components/UserManage.vue'
 import ZoneManage from '@/components/ZoneManage.vue'
-import { ArrowLeft, User, Grid } from '@element-plus/icons-vue'
+import TraceManage from '@/components/TraceManage.vue'
+import { ArrowLeft, User, Grid, CircleCheck, Setting } from '@element-plus/icons-vue'
 
 export default {
   name: 'Admin',
-  components: { UserManage, ZoneManage, ArrowLeft, User, Grid },
+  components: { UserManage, ZoneManage, TraceManage, ArrowLeft, User, Grid, CircleCheck, Setting },
   setup() {
     const activeMenu = ref('user')
-
     const currentComponent = computed(() => {
-      return activeMenu.value === 'user' ? 'UserManage' : 'ZoneManage'
+      switch (activeMenu.value) {
+        case 'user': return 'UserManage'
+        case 'zone': return 'ZoneManage'
+        case 'trace': return 'TraceManage'
+        default: return 'UserManage'
+      }
     })
-
-    const handleMenuSelect = (key) => {
-      activeMenu.value = key
-    }
-
-    return {
-      activeMenu,
-      currentComponent,
-      handleMenuSelect
-    }
+    const handleMenuSelect = (key) => { activeMenu.value = key }
+    return { activeMenu, currentComponent, handleMenuSelect }
   }
 }
 </script>
 
 <style scoped>
-.admin-container {
-  background: #0c1929;
-  height: 100vh;
+.admin-root {
+  min-height: 100vh;
+  background: linear-gradient(170deg, #060d1a 0%, #0d1b2a 25%, #132742 50%, #0f1f35 75%, #080f1e 100%);
+  display: flex;
+  flex-direction: column;
 }
 
 .admin-header {
-  background: linear-gradient(135deg, #0c1929 0%, #1e3a5f 100%);
-  border-bottom: 1px solid rgba(0, 212, 255, 0.3);
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
-  height: 60px;
+  align-items: center;
+  padding: 0 28px;
+  height: 56px;
+  background: rgba(12, 22, 40, 0.92);
+  border-bottom: 1px solid rgba(80, 150, 220, 0.1);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+  z-index: 100;
+  flex-shrink: 0;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
 }
 
 .back-icon {
   font-size: 20px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
+  transition: color 0.3s;
+}
+
+.back-icon:hover { color: #5b9bd5; }
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  font-size: 20px;
+  color: #5b9bd5;
+  filter: drop-shadow(0 0 6px rgba(91, 155, 213, 0.4));
+}
+
+.brand-text {
+  font-size: 17px;
+  font-weight: 700;
+  color: #d6e8f8;
+}
+
+.hdr-btn {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(80, 150, 220, 0.12) !important;
+  color: #a0c4e0 !important;
+  border-radius: 10px !important;
+  padding: 6px 16px !important;
   transition: all 0.3s;
 }
 
-.back-icon:hover {
-  color: #00d4ff;
+.hdr-btn:hover {
+  background: rgba(80, 150, 220, 0.12) !important;
+  border-color: rgba(80, 150, 220, 0.25) !important;
+  color: #7ab0e0 !important;
 }
 
-.header-title {
-  margin: 0;
-  color: #00d4ff;
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
-}
+.hdr-btn-text { margin-left: 5px; }
 
-.back-btn {
-  background: rgba(0, 212, 255, 0.2);
-  border: 1px solid rgba(0, 212, 255, 0.4);
-  color: #00d4ff;
-}
-
-.back-btn:hover {
-  background: rgba(0, 212, 255, 0.3);
-  border-color: #00d4ff;
-  color: #fff;
+.admin-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
 }
 
 .admin-aside {
-  background: rgba(20, 40, 60, 0.9);
-  border-right: 1px solid rgba(0, 212, 255, 0.2);
-  padding: 20px 12px;
+  width: 220px;
+  background: rgba(8, 18, 32, 0.7);
+  border-right: 1px solid rgba(80, 150, 220, 0.06);
+  padding: 16px 12px;
+  flex-shrink: 0;
 }
 
-.admin-menu {
+.side-menu {
   border: none;
   background: transparent;
 }
 
-.admin-menu :deep(.el-menu-item) {
-  color: rgba(255, 255, 255, 0.8);
-  border-radius: 8px;
-  margin-bottom: 4px;
+.side-menu :deep(.el-menu-item) {
+  color: rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  margin-bottom: 2px;
   transition: all 0.3s;
+  height: 44px;
+  line-height: 44px;
 }
 
-.admin-menu :deep(.el-menu-item:hover) {
-  background: rgba(0, 212, 255, 0.1);
-  color: #00d4ff;
+.side-menu :deep(.el-menu-item:hover) {
+  background: rgba(80, 150, 220, 0.08);
+  color: #8cb8e0;
 }
 
-.admin-menu :deep(.el-menu-item.is-active) {
-  background: rgba(0, 212, 255, 0.2);
-  color: #00d4ff;
+.side-menu :deep(.el-menu-item.is-active) {
+  background: rgba(33, 120, 220, 0.15);
+  color: #5b9bd5;
+  font-weight: 600;
 }
 
 .admin-main {
-  background: #0c1929;
-  padding: 20px;
+  flex: 1;
   overflow-y: auto;
+  padding: 24px;
+  background: transparent;
+}
+
+@media (max-width: 768px) {
+  .admin-aside { display: none; }
+  .hdr-btn-text { display: none; }
 }
 </style>

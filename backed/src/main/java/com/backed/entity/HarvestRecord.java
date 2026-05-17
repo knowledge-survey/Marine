@@ -1,6 +1,7 @@
 package com.backed.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -20,6 +21,9 @@ public class HarvestRecord {
     @TableField("species")
     private String species;
 
+    @TableField("batch_no")
+    private String batchNo;
+
     @TableField("quantity")
     private BigDecimal quantity;
 
@@ -27,6 +31,7 @@ public class HarvestRecord {
     private BigDecimal avgWeight;
 
     @TableField("harvest_date")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private LocalDate harvestDate;
 
     @TableField("remarks")

@@ -1,6 +1,7 @@
 package com.backed.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -19,6 +20,7 @@ public class InspectionRecord {
     private Long inspectorId;
 
     @TableField("inspection_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime inspectionTime;
 
     @TableField("issues")

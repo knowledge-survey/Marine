@@ -1,9 +1,11 @@
 <template>
-  <div class="record-container">
-    <el-card class="main-card">
+  <div class="record-root">
+    <el-card class="main-card" shadow="never">
       <template #header>
         <div class="card-header">
-          <span class="title">养殖记录管理</span>
+          <span class="title">
+            <el-icon><Document /></el-icon>养殖记录管理
+          </span>
           <span v-if="!zoneId" class="zone-warning">请先选择养殖区域</span>
         </div>
       </template>
@@ -12,10 +14,10 @@
         <el-tab-pane label="苗种投放" name="seedling" lazy>
           <div class="action-bar">
             <el-button type="primary" @click="showSeedlingDialog" :disabled="!zoneId" class="add-btn">
-              添加记录
+              <el-icon><Plus /></el-icon>添加记录
             </el-button>
           </div>
-          <el-table :data="seedlingList" border class="data-table" v-loading="loading">
+          <el-table :data="seedlingList" class="data-table" v-loading="loading" empty-text="暂无数据">
             <el-table-column prop="species" label="品种" width="120" />
             <el-table-column prop="batchNo" label="批次号" width="160" />
             <el-table-column prop="quantity" label="数量" width="120" />
@@ -28,10 +30,12 @@
         <el-tab-pane label="饲料投喂" name="feeding" lazy>
           <div class="action-bar">
             <el-button type="primary" @click="showFeedingDialog" :disabled="!zoneId" class="add-btn">
-              添加记录
+              <el-icon><Plus /></el-icon>添加记录
             </el-button>
           </div>
-          <el-table :data="feedingList" border class="data-table" v-loading="loading">
+          <el-table :data="feedingList" class="data-table" v-loading="loading" empty-text="暂无数据">
+            <el-table-column prop="species" label="品种" width="120" />
+            <el-table-column prop="batchNo" label="批次号" width="160" />
             <el-table-column prop="feedType" label="饲料类型" width="150" />
             <el-table-column prop="quantity" label="投喂量" width="120" />
             <el-table-column prop="feedingTime" label="投喂时间" width="180" />
@@ -42,11 +46,12 @@
         <el-tab-pane label="捕捞记录" name="harvest" lazy>
           <div class="action-bar">
             <el-button type="primary" @click="showHarvestDialog" :disabled="!zoneId" class="add-btn">
-              添加记录
+              <el-icon><Plus /></el-icon>添加记录
             </el-button>
           </div>
-          <el-table :data="harvestList" border class="data-table" v-loading="loading">
+          <el-table :data="harvestList" class="data-table" v-loading="loading" empty-text="暂无数据">
             <el-table-column prop="species" label="品种" width="120" />
+            <el-table-column prop="batchNo" label="批次号" width="160" />
             <el-table-column prop="quantity" label="数量" width="120" />
             <el-table-column prop="avgWeight" label="平均重量" width="120" />
             <el-table-column prop="harvestDate" label="捕捞日期" width="120" />
@@ -56,7 +61,7 @@
       </el-tabs>
     </el-card>
 
-    <el-dialog v-model="seedlingDialogVisible" title="添加苗种记录" width="500px" custom-class="aquaculture-add-dialog">
+    <el-dialog v-model="seedlingDialogVisible" title="添加苗种记录" width="500px" class="add-dialog">
       <el-form :model="seedlingForm" label-width="100px" class="add-form">
         <el-form-item label="品种">
           <el-input v-model="seedlingForm.species" class="full-width" />
@@ -87,8 +92,16 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="feedingDialogVisible" title="添加投喂记录" width="500px" custom-class="aquaculture-add-dialog">
+    <el-dialog v-model="feedingDialogVisible" title="添加投喂记录" width="500px" class="add-dialog">
       <el-form :model="feedingForm" label-width="100px" class="add-form">
+        <el-form-item label="批次号">
+          <el-select v-model="feedingForm.batchNo" class="full-width" placeholder="请选择批次" @change="handleFeedingBatchChange" filterable>
+            <el-option v-for="seedling in seedlingList" :key="seedling.batchNo" :label="seedling.batchNo" :value="seedling.batchNo" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="品种">
+          <el-input v-model="feedingForm.species" class="full-width" disabled />
+        </el-form-item>
         <el-form-item label="饲料类型">
           <el-input v-model="feedingForm.feedType" class="full-width" />
         </el-form-item>
@@ -108,10 +121,15 @@
       </template>
     </el-dialog>
 
-    <el-dialog v-model="harvestDialogVisible" title="添加捕捞记录" width="500px" custom-class="aquaculture-add-dialog">
+    <el-dialog v-model="harvestDialogVisible" title="添加捕捞记录" width="500px" class="add-dialog">
       <el-form :model="harvestForm" label-width="100px" class="add-form">
+        <el-form-item label="批次号">
+          <el-select v-model="harvestForm.batchNo" class="full-width" placeholder="请选择批次" @change="handleHarvestBatchChange" filterable>
+            <el-option v-for="seedling in seedlingList" :key="seedling.batchNo" :label="seedling.batchNo" :value="seedling.batchNo" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="品种">
-          <el-input v-model="harvestForm.species" class="full-width" />
+          <el-input v-model="harvestForm.species" class="full-width" disabled />
         </el-form-item>
         <el-form-item label="数量">
           <el-input-number v-model="harvestForm.quantity" :min="0" class="full-width" />
@@ -138,9 +156,11 @@
 import { ref, watch, onMounted } from 'vue'
 import { getSeedlingsByZone, getFeedingByZone, getHarvestByZone, createSeedling, createFeeding, createHarvest } from '@/api/record'
 import { ElMessage } from 'element-plus'
+import { Document, Plus } from '@element-plus/icons-vue'
 
 export default {
   name: 'AquacultureRecord',
+  components: { Document, Plus },
   props: ['zoneId'],
   setup(props) {
     const activeTab = ref('seedling')
@@ -148,693 +168,264 @@ export default {
     const feedingList = ref([])
     const harvestList = ref([])
     const loading = ref(false)
-
     const seedlingDialogVisible = ref(false)
     const feedingDialogVisible = ref(false)
     const harvestDialogVisible = ref(false)
-
     const seedlingForm = ref({})
     const feedingForm = ref({})
     const harvestForm = ref({})
 
     const loadData = async () => {
-      if (!props.zoneId) {
-        seedlingList.value = []
-        feedingList.value = []
-        harvestList.value = []
-        return
-      }
+      if (!props.zoneId) { seedlingList.value = []; feedingList.value = []; harvestList.value = []; return }
       loading.value = true
       try {
         const [seedlingRes, feedingRes, harvestRes] = await Promise.all([
-          getSeedlingsByZone(props.zoneId),
-          getFeedingByZone(props.zoneId),
-          getHarvestByZone(props.zoneId)
+          getSeedlingsByZone(props.zoneId), getFeedingByZone(props.zoneId), getHarvestByZone(props.zoneId)
         ])
         seedlingList.value = seedlingRes.data || []
         feedingList.value = feedingRes.data || []
         harvestList.value = harvestRes.data || []
-      } catch (error) {
-        console.error('加载数据失败:', error)
-        ElMessage.error('加载数据失败: ' + (error.response?.data?.message || error.message || '未知错误'))
-      } finally {
-        loading.value = false
-      }
+      } catch (e) { ElMessage.error('加载失败') } finally { loading.value = false }
     }
 
     const showSeedlingDialog = () => {
-      if (!props.zoneId) {
-        ElMessage.warning('请先选择养殖区域')
-        return
-      }
       const now = new Date()
-      const batchNo = `B${props.zoneId}${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`
-      seedlingForm.value = { 
-        species: '', 
-        batchNo: batchNo, 
-        quantity: null, 
-        source: '', 
-        releaseDate: '', 
-        remarks: '' 
-      }
+      const batchNo = `B${props.zoneId}${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`
+      seedlingForm.value = { species: '', batchNo, quantity: null, source: '', releaseDate: '', remarks: '' }
       seedlingDialogVisible.value = true
     }
 
     const generateBatchNo = () => {
-      if (!props.zoneId) return
       const now = new Date()
-      const batchNo = `B${props.zoneId}${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}${String(now.getHours()).padStart(2, '0')}${String(now.getMinutes()).padStart(2, '0')}`
-      seedlingForm.value.batchNo = batchNo
+      seedlingForm.value.batchNo = `B${props.zoneId}${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`
     }
 
-    const showFeedingDialog = () => {
-      if (!props.zoneId) {
-        ElMessage.warning('请先选择养殖区域')
-        return
-      }
-      feedingForm.value = { 
-        feedType: '', 
-        quantity: null, 
-        feedingTime: '', 
-        remarks: '' 
-      }
-      feedingDialogVisible.value = true
-    }
-
-    const showHarvestDialog = () => {
-      if (!props.zoneId) {
-        ElMessage.warning('请先选择养殖区域')
-        return
-      }
-      harvestForm.value = { 
-        species: '', 
-        quantity: null, 
-        avgWeight: null, 
-        harvestDate: '', 
-        remarks: '' 
-      }
-      harvestDialogVisible.value = true
-    }
+    const showFeedingDialog = () => { feedingForm.value = { species: '', batchNo: '', feedType: '', quantity: null, feedingTime: '', remarks: '' }; feedingDialogVisible.value = true }
+    const showHarvestDialog = () => { harvestForm.value = { species: '', batchNo: '', quantity: null, avgWeight: null, harvestDate: '', remarks: '' }; harvestDialogVisible.value = true }
+    const handleFeedingBatchChange = (batchNo) => { const s = seedlingList.value.find(s => s.batchNo === batchNo); if (s) feedingForm.value.species = s.species }
+    const handleHarvestBatchChange = (batchNo) => { const s = seedlingList.value.find(s => s.batchNo === batchNo); if (s) harvestForm.value.species = s.species }
 
     const addSeedling = async () => {
-      if (!seedlingForm.value.species) {
-        ElMessage.warning('请输入品种')
-        return
-      }
-      if (!seedlingForm.value.quantity) {
-        ElMessage.warning('请输入数量')
-        return
-      }
-      try {
-        await createSeedling({ 
-          ...seedlingForm.value, 
-          zoneId: props.zoneId 
-        })
-        seedlingDialogVisible.value = false
-        ElMessage.success('添加成功')
-        loadData()
-      } catch (error) {
-        console.error('添加失败:', error)
-        ElMessage.error('添加失败: ' + (error.response?.data?.message || error.message))
-      }
+      if (!seedlingForm.value.species) { ElMessage.warning('请输入品种'); return }
+      if (!seedlingForm.value.quantity) { ElMessage.warning('请输入数量'); return }
+      try { await createSeedling({ ...seedlingForm.value, zoneId: props.zoneId }); seedlingDialogVisible.value = false; ElMessage.success('添加成功'); loadData() } catch (e) { ElMessage.error('添加失败') }
     }
 
     const addFeeding = async () => {
-      if (!feedingForm.value.feedType) {
-        ElMessage.warning('请输入饲料类型')
-        return
-      }
-      if (!feedingForm.value.quantity) {
-        ElMessage.warning('请输入投喂量')
-        return
-      }
+      if (!feedingForm.value.batchNo) { ElMessage.warning('请选择批次号'); return }
+      if (!feedingForm.value.feedType) { ElMessage.warning('请输入饲料类型'); return }
+      if (!feedingForm.value.quantity) { ElMessage.warning('请输入投喂量'); return }
+      if (!feedingForm.value.feedingTime) { ElMessage.warning('请选择投喂时间'); return }
       try {
-        await createFeeding({ 
-          ...feedingForm.value, 
-          zoneId: props.zoneId 
-        })
-        feedingDialogVisible.value = false
-        ElMessage.success('添加成功')
-        loadData()
-      } catch (error) {
-        console.error('添加失败:', error)
-        ElMessage.error('添加失败: ' + (error.response?.data?.message || error.message))
-      }
+        await createFeeding({ zoneId: props.zoneId, species: feedingForm.value.species, batchNo: feedingForm.value.batchNo, feedType: feedingForm.value.feedType, quantity: feedingForm.value.quantity, feedingTime: feedingForm.value.feedingTime, remarks: feedingForm.value.remarks })
+        feedingDialogVisible.value = false; ElMessage.success('添加成功'); loadData()
+      } catch (e) { ElMessage.error('添加失败: ' + (e.response?.data?.message || e.message)) }
     }
 
     const addHarvest = async () => {
-      if (!harvestForm.value.species) {
-        ElMessage.warning('请输入品种')
-        return
-      }
-      if (!harvestForm.value.quantity) {
-        ElMessage.warning('请输入数量')
-        return
-      }
-      try {
-        await createHarvest({ 
-          ...harvestForm.value, 
-          zoneId: props.zoneId 
-        })
-        harvestDialogVisible.value = false
-        ElMessage.success('添加成功')
-        loadData()
-      } catch (error) {
-        console.error('添加失败:', error)
-        ElMessage.error('添加失败: ' + (error.response?.data?.message || error.message))
-      }
+      if (!harvestForm.value.batchNo) { ElMessage.warning('请选择批次号'); return }
+      if (!harvestForm.value.quantity) { ElMessage.warning('请输入数量'); return }
+      if (!harvestForm.value.harvestDate) { ElMessage.warning('请选择捕捞日期'); return }
+      try { await createHarvest({ ...harvestForm.value, zoneId: props.zoneId }); harvestDialogVisible.value = false; ElMessage.success('添加成功'); loadData() } catch (e) { ElMessage.error('添加失败') }
     }
 
-    watch(() => props.zoneId, (newVal) => {
-      if (newVal) {
-        loadData()
-      } else {
-        seedlingList.value = []
-        feedingList.value = []
-        harvestList.value = []
-      }
-    })
+    watch(() => props.zoneId, (v) => { if (v) loadData(); else { seedlingList.value = []; feedingList.value = []; harvestList.value = [] } })
+    onMounted(() => { loadData() })
 
-    onMounted(() => {
-      loadData()
-    })
-
-    return {
-      activeTab,
-      seedlingList,
-      feedingList,
-      harvestList,
-      loading,
-      seedlingDialogVisible,
-      feedingDialogVisible,
-      harvestDialogVisible,
-      seedlingForm,
-      feedingForm,
-      harvestForm,
-      showSeedlingDialog,
-      showFeedingDialog,
-      showHarvestDialog,
-      generateBatchNo,
-      addSeedling,
-      addFeeding,
-      addHarvest
-    }
+    return { activeTab, seedlingList, feedingList, harvestList, loading, seedlingDialogVisible, feedingDialogVisible, harvestDialogVisible, seedlingForm, feedingForm, harvestForm, showSeedlingDialog, showFeedingDialog, showHarvestDialog, generateBatchNo, addSeedling, addFeeding, addHarvest, handleFeedingBatchChange, handleHarvestBatchChange }
   }
 }
 </script>
 
 <style scoped>
-.record-container {
-  background: #0c1929;
-  min-height: 100vh;
-  padding: 20px;
-}
-
+.record-root { padding: 20px; }
 .main-card {
-  background: rgba(20, 40, 60, 0.9) !important;
-  border: 1px solid rgba(0, 212, 255, 0.3) !important;
+  background: rgba(12, 22, 40, 0.5) !important;
+  border: 1px solid rgba(80, 150, 220, 0.08) !important;
+  border-radius: 16px;
+  box-shadow: none;
 }
+.main-card :deep(.el-card__header) { border-bottom: 1px solid rgba(80, 150, 220, 0.06); padding: 16px 20px; }
+.main-card :deep(.el-card__body) { padding: 20px; }
+.card-header { display: flex; justify-content: space-between; align-items: center; }
+.title { display: flex; align-items: center; gap: 8px; color: #c8ddf8; font-size: 16px; font-weight: 600; }
+.title .el-icon { font-size: 18px; color: #5b9bd5; }
+.zone-warning { color: #ff8a65; font-size: 13px; }
 
-.main-card :deep(.el-card__header) {
-  border-bottom: 1px solid rgba(0, 212, 255, 0.2) !important;
-}
+.record-tabs :deep(.el-tabs__header) { border-bottom-color: rgba(80, 150, 220, 0.06); margin-bottom: 16px; }
+.record-tabs :deep(.el-tabs__item) { color: rgba(255,255,255,0.6) !important; font-size: 14px; font-weight: 500; transition: all 0.3s; }
+.record-tabs :deep(.el-tabs__item:hover) { color: rgba(255,255,255,0.85) !important; }
+.record-tabs :deep(.el-tabs__item.is-active) { color: #5b9bd5 !important; font-weight: 600; }
+.record-tabs :deep(.el-tabs__active-bar) { background: linear-gradient(90deg, #2196f3, #5b9bd5); }
+.record-tabs :deep(.el-tabs__nav-wrap::after) { display: none; }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+.action-bar { margin-bottom: 16px; }
+.add-btn { background: rgba(33, 150, 243, 0.15) !important; border: 1px solid rgba(33, 150, 243, 0.25) !important; color: #64b5f6 !important; border-radius: 10px; transition: all 0.3s; }
+.add-btn:hover { background: rgba(33, 150, 243, 0.25) !important; }
+.add-btn:disabled { opacity: 0.4; }
 
-.title {
-  color: #00d4ff;
-  font-size: 20px;
+.data-table { border-radius: 10px; overflow: hidden; }
+.data-table :deep(.el-table) { background: #0c1628 !important; }
+.data-table :deep(.el-table::before) { display: none; }
+.data-table :deep(.el-table__header th) {
+  background: #0f1f35 !important;
+  color: #8cb8e0 !important;
   font-weight: 600;
-  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
-}
-
-.zone-warning {
-  color: #ff6b35;
-  font-size: 14px;
-}
-
-.record-tabs :deep(.el-tabs__item) {
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.record-tabs :deep(.el-tabs__item.is-active) {
-  color: #00d4ff;
-}
-
-.record-tabs :deep(.el-tabs__active-bar) {
-  background-color: #00d4ff;
-}
-
-.action-bar {
-  margin-bottom: 16px;
-}
-
-.add-btn {
-  background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%);
-  border: none;
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
-}
-
-.data-table {
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.data-table :deep(.el-table) {
-  background-color: rgba(10, 25, 40, 0.8) !important;
-}
-
-.data-table :deep(.el-table::before) {
-  background-color: transparent !important;
-}
-
-.data-table :deep(.el-table__header-wrapper) {
-  background-color: rgba(10, 25, 40, 0.9) !important;
-}
-
-.data-table :deep(.el-table__header) {
-  background-color: rgba(10, 25, 40, 0.9) !important;
-}
-
-.data-table :deep(.el-table__header-wrapper th) {
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 119, 255, 0.1) 100%) !important;
-  color: #00d4ff !important;
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 0.5px;
-  border-bottom: 2px solid rgba(0, 212, 255, 0.3) !important;
-  padding: 12px 0;
-}
-
-.data-table :deep(.el-table__body-wrapper) {
-  background-color: rgba(10, 25, 40, 0.8) !important;
-}
-
-.data-table :deep(.el-table__body) {
-  background-color: rgba(10, 25, 40, 0.8) !important;
-}
-
-.data-table :deep(.el-table__row) {
-  background-color: rgba(10, 25, 40, 0.8) !important;
-}
-
-.data-table :deep(.el-table__cell) {
-  background-color: rgba(10, 25, 40, 0.8) !important;
-  color: rgba(255, 255, 255, 0.9) !important;
-  border-color: rgba(0, 212, 255, 0.08) !important;
-  padding: 10px 0;
   font-size: 13px;
+  border-bottom: 1px solid rgba(80, 150, 220, 0.15) !important;
+  padding: 14px 0;
 }
-
-.data-table :deep(.el-table__row:hover > .el-table__cell) {
-  background-color: rgba(0, 212, 255, 0.08) !important;
-  color: #00d4ff !important;
-}
-
-.data-table :deep(.el-table__empty-block) {
-  background-color: rgba(10, 25, 40, 0.5) !important;
-}
-
-.data-table :deep(.el-table__empty-text) {
-  color: rgba(255, 255, 255, 0.5) !important;
-}
-
-/* ===== Dialog Dark Theme ===== */
-.add-dialog :deep(.el-dialog) {
-  background: rgba(20, 40, 60, 0.95) !important;
-  border: 1px solid rgba(0, 212, 255, 0.3) !important;
-  border-radius: 12px !important;
-  backdrop-filter: blur(10px);
-}
-
-.add-dialog :deep(.el-overlay) {
-  background-color: rgba(0, 0, 0, 0.5) !important;
-}
-
-.add-dialog :deep(.el-dialog__header) {
-  border-bottom: 1px solid rgba(0, 212, 255, 0.2) !important;
-  background: transparent !important;
-  padding: 20px;
-}
-
-.add-dialog :deep(.el-dialog__title) {
-  color: #00d4ff !important;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.add-dialog :deep(.el-dialog__close) {
-  color: rgba(255, 255, 255, 0.6) !important;
-  font-size: 18px;
-}
-
-.add-dialog :deep(.el-dialog__close:hover) {
-  color: #00d4ff !important;
-}
-
-.add-dialog :deep(.el-dialog__body) {
-  background: transparent !important;
-  padding: 20px;
-}
-
-.add-dialog :deep(.el-dialog__footer) {
-  border-top: 1px solid rgba(0, 212, 255, 0.15) !important;
-  background: transparent !important;
-  padding: 15px 20px;
-}
-
-.add-form :deep(.el-form-item__label) {
-  color: rgba(255, 255, 255, 0.9) !important;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 40px;
-  text-align: right;
-  padding-right: 12px;
-}
-
-.add-form :deep(.el-form-item) {
-  margin-bottom: 20px;
-}
-
-.add-form :deep(.el-form-item__content) {
-  justify-content: flex-start;
-}
-
-/* Input fields */
-.add-form :deep(.el-input__wrapper) {
-  background-color: rgba(10, 25, 40, 0.8) !important;
-  border: 1px solid rgba(0, 212, 255, 0.2) !important;
-  border-radius: 8px !important;
-  box-shadow: none !important;
-  transition: all 0.3s ease;
-}
-
-.add-form :deep(.el-input__wrapper:hover) {
-  border-color: rgba(0, 212, 255, 0.4) !important;
-}
-
-.add-form :deep(.el-input__wrapper.is-focus) {
-  border-color: #00d4ff !important;
-  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2) !important;
-}
-
-.add-form :deep(.el-input__inner) {
-  color: rgba(255, 255, 255, 0.9) !important;
+.data-table :deep(.el-table__cell) {
+  background: #0c1628 !important;
+  color: #d6e8f8 !important;
+  border-color: rgba(80, 150, 220, 0.08) !important;
+  padding: 12px 0;
   font-size: 14px;
 }
-
-.add-form :deep(.el-input__inner::placeholder) {
-  color: rgba(255, 255, 255, 0.4) !important;
+.data-table :deep(.el-table__cell .cell) {
+  color: #d6e8f8 !important;
 }
-
-/* Textarea */
-.add-form :deep(.el-textarea__inner) {
-  background-color: rgba(10, 25, 40, 0.8) !important;
-  border: 1px solid rgba(0, 212, 255, 0.2) !important;
-  border-radius: 8px !important;
-  color: rgba(255, 255, 255, 0.9) !important;
-  box-shadow: none !important;
-  transition: all 0.3s ease;
+.data-table :deep(.el-table__row:hover > td) {
+  background: #132742 !important;
 }
+.data-table :deep(.el-table__empty-block) { background: #0c1628 !important; }
+.data-table :deep(.el-table__empty-text) { color: rgba(255,255,255,0.4); }
+.data-table :deep(.el-loading-mask) { background: rgba(12, 22, 40, 0.8) !important; }
 
-.add-form :deep(.el-textarea__inner:hover) {
-  border-color: rgba(0, 212, 255, 0.4) !important;
-}
-
-.add-form :deep(.el-textarea__inner:focus) {
-  border-color: #00d4ff !important;
-  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2) !important;
-}
-
-.add-form :deep(.el-textarea__inner::placeholder) {
-  color: rgba(255, 255, 255, 0.4) !important;
-}
-
-/* Date picker */
-.add-form :deep(.el-date-editor.el-input__wrapper) {
-  background-color: rgba(10, 25, 40, 0.8) !important;
-  border: 1px solid rgba(0, 212, 255, 0.2) !important;
-  border-radius: 8px !important;
-  box-shadow: none !important;
-}
-
-.add-form :deep(.el-date-editor.el-input__wrapper:hover) {
-  border-color: rgba(0, 212, 255, 0.4) !important;
-}
-
-.add-form :deep(.el-date-editor .el-input__inner) {
-  color: rgba(255, 255, 255, 0.9) !important;
-}
-
-.add-form :deep(.el-input__icon) {
-  color: rgba(0, 212, 255, 0.6) !important;
-}
-
-/* Number input */
-.add-form :deep(.el-input-number__decrease),
-.add-form :deep(.el-input-number__increase) {
-  background-color: rgba(0, 212, 255, 0.1) !important;
-  color: #00d4ff !important;
-  border-color: rgba(0, 212, 255, 0.2) !important;
-}
-
-.add-form :deep(.el-input-number__decrease:hover),
-.add-form :deep(.el-input-number__increase:hover) {
-  background-color: rgba(0, 212, 255, 0.2) !important;
-  color: #00d4ff !important;
-}
-
-.add-form :deep(.el-input-number .el-input__wrapper) {
-  background-color: rgba(10, 25, 40, 0.8) !important;
-  border: 1px solid rgba(0, 212, 255, 0.2) !important;
-}
-
-/* Input group append (for batch number generator) */
-.add-form :deep(.el-input-group__append) {
-  background-color: rgba(0, 212, 255, 0.1) !important;
-  border-color: rgba(0, 212, 255, 0.2) !important;
-}
-
-.add-form :deep(.el-input-group__append .el-button) {
-  background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%) !important;
-  border: none !important;
-  color: #fff !important;
-  border-radius: 0 6px 6px 0 !important;
-}
-
-/* Buttons */
-.add-dialog :deep(.el-button) {
-  border-radius: 8px !important;
-  padding: 8px 20px;
-  font-weight: 500;
-}
-
-.add-dialog :deep(.el-button--default) {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: rgba(255, 255, 255, 0.8) !important;
-}
-
-.add-dialog :deep(.el-button--default:hover) {
-  background: rgba(255, 255, 255, 0.15) !important;
-  color: #fff !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
-}
-
-.add-dialog :deep(.el-button--primary) {
-  background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%) !important;
-  border: none !important;
-  color: #fff !important;
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4) !important;
-}
-
-.add-dialog :deep(.el-button--primary:hover) {
-  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6) !important;
-  transform: translateY(-1px);
-}
-
-.full-width {
-  width: 100%;
-}
+.full-width { width: 100%; }
 </style>
 
 <style>
-/* Global dialog styles - must be unscoped for teleported dialogs */
-.aquaculture-add-dialog .el-dialog {
-  background: rgba(20, 40, 60, 0.95) !important;
-  border: 1px solid rgba(0, 212, 255, 0.3) !important;
-  border-radius: 12px !important;
-  backdrop-filter: blur(10px);
+.add-dialog {
+  --el-dialog-bg-color: #0f1c2e;
 }
-
-.aquaculture-add-dialog .el-overlay {
-  background-color: rgba(0, 0, 0, 0.5) !important;
+.add-dialog .el-dialog {
+  background: #0f1c2e;
+  border: 1px solid rgba(80, 150, 220, 0.15);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
 }
-
-.aquaculture-add-dialog .el-dialog__header {
-  border-bottom: 1px solid rgba(0, 212, 255, 0.2) !important;
-  background: transparent !important;
-  padding: 20px !important;
+.add-dialog .el-dialog__header {
+  padding: 20px 24px 0;
+  border-bottom: none;
 }
-
-.aquaculture-add-dialog .el-dialog__title {
-  color: #00d4ff !important;
-  font-size: 18px !important;
-  font-weight: 600 !important;
+.add-dialog .el-dialog__title {
+  color: #d6e8f8;
+  font-size: 18px;
+  font-weight: 600;
 }
-
-.aquaculture-add-dialog .el-dialog__close {
-  color: rgba(255, 255, 255, 0.6) !important;
-  font-size: 18px !important;
+.add-dialog .el-dialog__close {
+  color: rgba(255, 255, 255, 0.5);
 }
-
-.aquaculture-add-dialog .el-dialog__close:hover {
-  color: #00d4ff !important;
+.add-dialog .el-dialog__close:hover {
+  color: #5b9bd5;
 }
-
-.aquaculture-add-dialog .el-dialog__body {
-  background: transparent !important;
-  padding: 20px !important;
-  color: rgba(255, 255, 255, 0.9);
+.add-dialog .el-dialog__body {
+  padding: 20px 24px;
 }
-
-.aquaculture-add-dialog .el-dialog__footer {
-  border-top: 1px solid rgba(0, 212, 255, 0.15) !important;
-  background: transparent !important;
-  padding: 15px 20px !important;
+.add-dialog .el-dialog__footer {
+  padding: 0 24px 20px;
+  border-top: none;
 }
-
-.aquaculture-add-dialog .el-form-item__label {
-  color: rgba(255, 255, 255, 0.9) !important;
-  font-size: 14px !important;
-  font-weight: 500 !important;
-  line-height: 40px !important;
-  text-align: right !important;
-  padding-right: 12px !important;
+.add-dialog .el-form-item__label {
+  color: #a0c8e8 !important;
+  font-weight: 500;
+  font-size: 14px;
 }
-
-.aquaculture-add-dialog .el-input__wrapper {
-  background-color: rgba(10, 25, 40, 0.8) !important;
-  border: 1px solid rgba(0, 212, 255, 0.2) !important;
-  border-radius: 8px !important;
+.add-dialog .el-input__wrapper {
+  background: rgba(255, 255, 255, 0.06) !important;
   box-shadow: none !important;
+  border: 1px solid rgba(80, 150, 220, 0.15);
+  border-radius: 8px;
 }
-
-.aquaculture-add-dialog .el-input__wrapper:hover {
-  border-color: rgba(0, 212, 255, 0.4) !important;
+.add-dialog .el-input__wrapper:hover {
+  border-color: rgba(80, 150, 220, 0.3);
 }
-
-.aquaculture-add-dialog .el-input__wrapper.is-focus {
-  border-color: #00d4ff !important;
-  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2) !important;
+.add-dialog .el-input__wrapper.is-focus {
+  border-color: #5b9bd5 !important;
+  box-shadow: 0 0 0 2px rgba(91, 155, 213, 0.15) !important;
 }
-
-.aquaculture-add-dialog .el-input__inner {
-  color: rgba(255, 255, 255, 0.9) !important;
-  font-size: 14px !important;
+.add-dialog .el-input__inner {
+  color: #d6e8f8 !important;
+  font-size: 14px;
 }
-
-.aquaculture-add-dialog .el-input__inner::placeholder {
-  color: rgba(255, 255, 255, 0.4) !important;
+.add-dialog .el-input__inner::placeholder {
+  color: rgba(255, 255, 255, 0.3) !important;
 }
-
-.aquaculture-add-dialog .el-textarea__inner {
-  background-color: rgba(10, 25, 40, 0.8) !important;
-  border: 1px solid rgba(0, 212, 255, 0.2) !important;
-  border-radius: 8px !important;
-  color: rgba(255, 255, 255, 0.9) !important;
+.add-dialog .el-input.is-disabled .el-input__wrapper {
+  background: rgba(255, 255, 255, 0.03) !important;
+  opacity: 0.6;
+}
+.add-dialog .el-input-number .el-input__wrapper {
+  width: 100%;
+}
+.add-dialog .el-select .el-input__wrapper {
+  background: rgba(255, 255, 255, 0.06) !important;
   box-shadow: none !important;
+  border: 1px solid rgba(80, 150, 220, 0.15);
 }
-
-.aquaculture-add-dialog .el-textarea__inner:hover {
-  border-color: rgba(0, 212, 255, 0.4) !important;
+.add-dialog .el-select .el-input__inner {
+  color: #d6e8f8 !important;
 }
-
-.aquaculture-add-dialog .el-textarea__inner:focus {
-  border-color: #00d4ff !important;
-  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2) !important;
+.add-dialog .el-textarea__inner {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(80, 150, 220, 0.15);
+  color: #d6e8f8 !important;
+  border-radius: 8px;
 }
-
-.aquaculture-add-dialog .el-textarea__inner::placeholder {
-  color: rgba(255, 255, 255, 0.4) !important;
+.add-dialog .el-textarea__inner:focus {
+  border-color: #5b9bd5 !important;
+  box-shadow: 0 0 0 2px rgba(91, 155, 213, 0.15) !important;
 }
-
-.aquaculture-add-dialog .el-date-editor.el-input__wrapper {
-  background-color: rgba(10, 25, 40, 0.8) !important;
-  border: 1px solid rgba(0, 212, 255, 0.2) !important;
-  border-radius: 8px !important;
+.add-dialog .el-textarea__inner::placeholder {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+.add-dialog .el-date-editor .el-input__wrapper {
+  background: rgba(255, 255, 255, 0.06) !important;
   box-shadow: none !important;
+  border: 1px solid rgba(80, 150, 220, 0.15);
 }
-
-.aquaculture-add-dialog .el-date-editor .el-input__inner {
-  color: rgba(255, 255, 255, 0.9) !important;
+.add-dialog .el-button {
+  border-radius: 8px;
 }
-
-.aquaculture-add-dialog .el-input__icon {
-  color: rgba(0, 212, 255, 0.6) !important;
+.add-dialog .el-button--default {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #a0c8e0 !important;
 }
-
-.aquaculture-add-dialog .el-input-number__decrease,
-.aquaculture-add-dialog .el-input-number__increase {
-  background-color: rgba(0, 212, 255, 0.1) !important;
-  color: #00d4ff !important;
-  border-color: rgba(0, 212, 255, 0.2) !important;
-}
-
-.aquaculture-add-dialog .el-input-number__decrease:hover,
-.aquaculture-add-dialog .el-input-number__increase:hover {
-  background-color: rgba(0, 212, 255, 0.2) !important;
-  color: #00d4ff !important;
-}
-
-.aquaculture-add-dialog .el-input-number .el-input__wrapper {
-  background-color: rgba(10, 25, 40, 0.8) !important;
-  border: 1px solid rgba(0, 212, 255, 0.2) !important;
-}
-
-.aquaculture-add-dialog .el-input-group__append {
-  background-color: rgba(0, 212, 255, 0.1) !important;
-  border-color: rgba(0, 212, 255, 0.2) !important;
-}
-
-.aquaculture-add-dialog .el-input-group__append .el-button {
-  background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%) !important;
-  border: none !important;
-  color: #fff !important;
-  border-radius: 0 6px 6px 0 !important;
-}
-
-.aquaculture-add-dialog .el-button {
-  border-radius: 8px !important;
-  padding: 8px 20px !important;
-  font-weight: 500 !important;
-}
-
-.aquaculture-add-dialog .el-button--default {
+.add-dialog .el-button--default:hover {
   background: rgba(255, 255, 255, 0.1) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  color: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #d6e8f8 !important;
 }
-
-.aquaculture-add-dialog .el-button--default:hover {
-  background: rgba(255, 255, 255, 0.15) !important;
-  color: #fff !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
+.add-dialog .el-button--primary {
+  background: linear-gradient(135deg, #5b9bd5, #2196f3);
+  border: none;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.25);
 }
-
-.aquaculture-add-dialog .el-button--primary {
-  background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%) !important;
-  border: none !important;
-  color: #fff !important;
-  box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4) !important;
+.add-dialog .el-select-dropdown {
+  background: #0f1c2e !important;
+  border: 1px solid rgba(80, 150, 220, 0.15) !important;
 }
-
-.aquaculture-add-dialog .el-button--primary:hover {
-  box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6) !important;
-  transform: translateY(-1px);
+.add-dialog .el-select-dropdown__item {
+  color: #d6e8f8 !important;
+}
+.add-dialog .el-select-dropdown__item.hover,
+.add-dialog .el-select-dropdown__item:hover {
+  background: rgba(80, 150, 220, 0.1) !important;
+}
+.add-dialog .el-select-dropdown__item.selected {
+  color: #5b9bd5 !important;
+  font-weight: 600;
+}
+.add-dialog .el-popper.is-light {
+  background: #0f1c2e !important;
+  border: 1px solid rgba(80, 150, 220, 0.15) !important;
+  color: #d6e8f8 !important;
+}
+.add-dialog .el-picker-panel {
+  background: #0f1c2e !important;
+  border: 1px solid rgba(80, 150, 220, 0.15) !important;
+  color: #d6e8f8 !important;
 }
 </style>

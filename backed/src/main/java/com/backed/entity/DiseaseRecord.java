@@ -1,6 +1,7 @@
 package com.backed.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -16,10 +17,17 @@ public class DiseaseRecord {
     @TableField("zone_id")
     private Long zoneId;
 
+    @TableField("species")
+    private String species;
+
+    @TableField("batch_no")
+    private String batchNo;
+
     @TableField("disease_name")
     private String diseaseName;
 
     @TableField("occurrence_date")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private LocalDate occurrenceDate;
 
     @TableField("symptoms")

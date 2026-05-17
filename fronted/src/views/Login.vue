@@ -40,7 +40,7 @@
     <div class="login-card">
       <div class="login-header">
         <div class="logo-icon">
-          <el-icon><Cpu /></el-icon>
+          <el-icon><Ship /></el-icon>
         </div>
         <h2>海洋养殖管理系统</h2>
         <p>Marine Aquaculture Management System</p>
@@ -65,7 +65,7 @@
         </el-form-item>
       </el-form>
       <div class="login-footer">
-        <el-icon><Cpu /></el-icon>
+        <el-icon><Ship /></el-icon>
         <span>林志祥</span>
       </div>
     </div>
@@ -76,12 +76,12 @@
 import { login } from '@/api/user'
 import { useRouter } from 'vue-router'
 import { reactive } from 'vue'
-import { User, Lock, Cpu } from '@element-plus/icons-vue'
+import { User, Lock, Ship } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
 export default {
   name: 'Login',
-  components: { User, Lock, Cpu },
+  components: { User, Lock, Ship },
   setup() {
     const router = useRouter()
     const loginForm = reactive({
@@ -132,7 +132,7 @@ export default {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a1628 0%, #0d2137 50%, #0a1929 100%);
+  background: linear-gradient(170deg, #060d1a 0%, #0d1b2a 25%, #132742 50%, #0f1f35 75%, #080f1e 100%);
   position: relative;
   overflow: hidden;
 }
@@ -150,58 +150,20 @@ export default {
   position: absolute;
   width: 100%;
   height: 100%;
-  opacity: 0.15;
+  opacity: 0.12;
 }
 
 .circuit-line {
   position: absolute;
-  background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+  background: linear-gradient(90deg, transparent, #5b9bd5, transparent);
 }
 
-.circuit-line.h1 {
-  top: 25%;
-  left: 0;
-  width: 40%;
-  height: 1px;
-}
-
-.circuit-line.h2 {
-  top: 50%;
-  left: 30%;
-  width: 50%;
-  height: 1px;
-}
-
-.circuit-line.h3 {
-  top: 75%;
-  left: 10%;
-  width: 35%;
-  height: 1px;
-}
-
-.circuit-line.v1 {
-  top: 10%;
-  left: 20%;
-  width: 1px;
-  height: 30%;
-  background: linear-gradient(180deg, transparent, #00d4ff, transparent);
-}
-
-.circuit-line.v2 {
-  top: 40%;
-  left: 60%;
-  width: 1px;
-  height: 40%;
-  background: linear-gradient(180deg, transparent, #00d4ff, transparent);
-}
-
-.circuit-line.v3 {
-  top: 20%;
-  left: 80%;
-  width: 1px;
-  height: 25%;
-  background: linear-gradient(180deg, transparent, #00d4ff, transparent);
-}
+.circuit-line.h1 { top: 25%; left: 0; width: 40%; height: 1px; }
+.circuit-line.h2 { top: 50%; left: 30%; width: 50%; height: 1px; }
+.circuit-line.h3 { top: 75%; left: 10%; width: 35%; height: 1px; }
+.circuit-line.v1 { top: 10%; left: 20%; width: 1px; height: 30%; background: linear-gradient(180deg, transparent, #5b9bd5, transparent); }
+.circuit-line.v2 { top: 40%; left: 60%; width: 1px; height: 40%; background: linear-gradient(180deg, transparent, #5b9bd5, transparent); }
+.circuit-line.v3 { top: 20%; left: 80%; width: 1px; height: 25%; background: linear-gradient(180deg, transparent, #5b9bd5, transparent); }
 
 .floating-shapes {
   position: absolute;
@@ -211,74 +173,20 @@ export default {
 
 .shape {
   position: absolute;
-  border: 1px solid rgba(0, 212, 255, 0.3);
+  border: 1px solid rgba(80, 150, 220, 0.25);
   animation: floatShape 20s ease-in-out infinite;
 }
 
-.shape-1 {
-  top: 15%;
-  left: 15%;
-  width: 60px;
-  height: 60px;
-  transform: rotate(45deg);
-  animation-delay: 0s;
-}
-
-.shape-2 {
-  top: 60%;
-  left: 10%;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  animation-delay: -3s;
-}
-
-.shape-3 {
-  top: 20%;
-  right: 20%;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border-color: rgba(0, 212, 255, 0.15);
-  animation-delay: -5s;
-}
-
-.shape-4 {
-  bottom: 25%;
-  left: 25%;
-  width: 30px;
-  height: 30px;
-  transform: rotate(30deg);
-  animation-delay: -7s;
-}
-
-.shape-5 {
-  top: 45%;
-  left: 45%;
-  width: 50px;
-  height: 50px;
-  border-color: rgba(0, 119, 255, 0.2);
-  animation-delay: -9s;
-}
-
-.shape-6 {
-  bottom: 15%;
-  right: 15%;
-  width: 45px;
-  height: 45px;
-  transform: rotate(60deg);
-  animation-delay: -11s;
-}
+.shape-1 { top: 15%; left: 15%; width: 60px; height: 60px; transform: rotate(45deg); animation-delay: 0s; }
+.shape-2 { top: 60%; left: 10%; width: 40px; height: 40px; border-radius: 50%; animation-delay: -3s; }
+.shape-3 { top: 20%; right: 20%; width: 80px; height: 80px; border-radius: 50%; border-color: rgba(80, 150, 220, 0.12); animation-delay: -5s; }
+.shape-4 { bottom: 25%; left: 25%; width: 30px; height: 30px; transform: rotate(30deg); animation-delay: -7s; }
+.shape-5 { top: 45%; left: 45%; width: 50px; height: 50px; border-color: rgba(33, 150, 243, 0.15); animation-delay: -9s; }
+.shape-6 { bottom: 15%; right: 15%; width: 45px; height: 45px; transform: rotate(60deg); animation-delay: -11s; }
 
 @keyframes floatShape {
-  0%, 100% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translateY(-20px) rotate(180deg);
-    opacity: 0.8;
-  }
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.4; }
+  50% { transform: translateY(-20px) rotate(180deg); opacity: 0.7; }
 }
 
 .glow-orbs {
@@ -294,42 +202,13 @@ export default {
   animation: orbPulse 8s ease-in-out infinite;
 }
 
-.orb-1 {
-  top: 30%;
-  left: 25%;
-  width: 200px;
-  height: 200px;
-  background: rgba(0, 212, 255, 0.15);
-  animation-delay: 0s;
-}
-
-.orb-2 {
-  top: 50%;
-  right: 30%;
-  width: 150px;
-  height: 150px;
-  background: rgba(0, 119, 255, 0.1);
-  animation-delay: -3s;
-}
-
-.orb-3 {
-  bottom: 20%;
-  left: 40%;
-  width: 180px;
-  height: 180px;
-  background: rgba(0, 212, 255, 0.08);
-  animation-delay: -5s;
-}
+.orb-1 { top: 30%; left: 25%; width: 200px; height: 200px; background: rgba(80, 150, 220, 0.12); animation-delay: 0s; }
+.orb-2 { top: 50%; right: 30%; width: 150px; height: 150px; background: rgba(33, 150, 243, 0.08); animation-delay: -3s; }
+.orb-3 { bottom: 20%; left: 40%; width: 180px; height: 180px; background: rgba(80, 150, 220, 0.06); animation-delay: -5s; }
 
 @keyframes orbPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-  50% {
-    transform: scale(1.2);
-    opacity: 0.8;
-  }
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50% { transform: scale(1.2); opacity: 0.7; }
 }
 
 .cube-wrapper {
@@ -348,46 +227,25 @@ export default {
 }
 
 @keyframes rotateCube {
-  0% {
-    transform: rotateX(0deg) rotateY(0deg);
-  }
-  100% {
-    transform: rotateX(360deg) rotateY(360deg);
-  }
+  0% { transform: rotateX(0deg) rotateY(0deg); }
+  100% { transform: rotateX(360deg) rotateY(360deg); }
 }
 
 .cube-face {
   position: absolute;
   width: 120px;
   height: 120px;
-  border: 1px solid rgba(0, 212, 255, 0.4);
-  background: rgba(0, 212, 255, 0.05);
-  box-shadow: inset 0 0 20px rgba(0, 212, 255, 0.1);
+  border: 1px solid rgba(80, 150, 220, 0.35);
+  background: rgba(80, 150, 220, 0.04);
+  box-shadow: inset 0 0 20px rgba(80, 150, 220, 0.08);
 }
 
-.cube-face.front {
-  transform: translateZ(60px);
-}
-
-.cube-face.back {
-  transform: translateZ(-60px) rotateY(180deg);
-}
-
-.cube-face.left {
-  transform: translateX(-60px) rotateY(-90deg);
-}
-
-.cube-face.right {
-  transform: translateX(60px) rotateY(90deg);
-}
-
-.cube-face.top {
-  transform: translateY(-60px) rotateX(90deg);
-}
-
-.cube-face.bottom {
-  transform: translateY(60px) rotateX(-90deg);
-}
+.cube-face.front { transform: translateZ(60px); }
+.cube-face.back { transform: translateZ(-60px) rotateY(180deg); }
+.cube-face.left { transform: translateX(-60px) rotateY(-90deg); }
+.cube-face.right { transform: translateX(60px) rotateY(90deg); }
+.cube-face.top { transform: translateY(-60px) rotateX(90deg); }
+.cube-face.bottom { transform: translateY(60px) rotateX(-90deg); }
 
 .platform {
   position: absolute;
@@ -396,25 +254,15 @@ export default {
   transform: translateX(-50%);
   width: 180px;
   height: 40px;
-  border: 2px solid rgba(0, 212, 255, 0.3);
+  border: 2px solid rgba(80, 150, 220, 0.25);
   border-radius: 50%;
-  box-shadow: 
-    0 0 30px rgba(0, 212, 255, 0.3),
-    inset 0 0 20px rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 30px rgba(80, 150, 220, 0.25), inset 0 0 20px rgba(80, 150, 220, 0.08);
   animation: platformGlow 3s ease-in-out infinite;
 }
 
 @keyframes platformGlow {
-  0%, 100% {
-    box-shadow: 
-      0 0 30px rgba(0, 212, 255, 0.3),
-      inset 0 0 20px rgba(0, 212, 255, 0.1);
-  }
-  50% {
-    box-shadow: 
-      0 0 50px rgba(0, 212, 255, 0.5),
-      inset 0 0 30px rgba(0, 212, 255, 0.2);
-  }
+  0%, 100% { box-shadow: 0 0 30px rgba(80, 150, 220, 0.25), inset 0 0 20px rgba(80, 150, 220, 0.08); }
+  50% { box-shadow: 0 0 50px rgba(80, 150, 220, 0.4), inset 0 0 30px rgba(80, 150, 220, 0.15); }
 }
 
 .particles {
@@ -425,38 +273,27 @@ export default {
 
 .particle {
   position: absolute;
-  background: rgba(0, 212, 255, 0.6);
+  background: rgba(80, 150, 220, 0.5);
   border-radius: 50%;
   animation: particleFloat linear infinite;
 }
 
 @keyframes particleFloat {
-  0% {
-    transform: translateY(100vh) scale(0);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-100vh) scale(1);
-    opacity: 0;
-  }
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100vh) scale(1); opacity: 0; }
 }
 
 .login-card {
   width: 380px;
   padding: 40px;
-  background: rgba(20, 40, 60, 0.45) !important;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 212, 255, 0.2) !important;
-  border-radius: 16px !important;
-  box-shadow: 
-    0 0 40px rgba(0, 212, 255, 0.15),
-    0 20px 60px rgba(0, 0, 0, 0.5);
+  background: rgba(12, 22, 40, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(80, 150, 220, 0.12);
+  border-radius: 24px;
+  box-shadow: 0 0 40px rgba(80, 150, 220, 0.08), 0 30px 80px rgba(0, 0, 0, 0.5);
   z-index: 10;
   position: relative;
 }
@@ -468,7 +305,7 @@ export default {
   left: 20%;
   right: 20%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+  background: linear-gradient(90deg, transparent, #5b9bd5, transparent);
 }
 
 .login-header {
@@ -483,28 +320,28 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 119, 255, 0.2));
+  background: rgba(80, 150, 220, 0.12);
   border-radius: 16px;
-  border: 1px solid rgba(0, 212, 255, 0.3);
+  border: 1px solid rgba(80, 150, 220, 0.2);
 }
 
 .logo-icon .el-icon {
   font-size: 32px;
-  color: #00d4ff;
+  color: #5b9bd5;
+  filter: drop-shadow(0 0 8px rgba(91, 155, 213, 0.4));
 }
 
 .login-header h2 {
   margin: 0 0 8px 0;
-  color: #00d4ff;
+  color: #d6e8f8;
   font-size: 24px;
   font-weight: 700;
   letter-spacing: 2px;
-  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
 }
 
 .login-header p {
   margin: 0;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.4);
   font-size: 12px;
   letter-spacing: 1px;
 }
@@ -531,20 +368,20 @@ export default {
 .input-icon {
   position: absolute;
   left: 14px;
-  color: rgba(0, 212, 255, 0.7);
+  color: rgba(80, 150, 220, 0.6);
   font-size: 18px;
   z-index: 1;
   transition: color 0.3s;
 }
 
 .input-wrapper:focus-within .input-icon {
-  color: #00d4ff;
+  color: #5b9bd5;
 }
 
 .input-wrapper :deep(.el-input__wrapper) {
   padding-left: 44px !important;
-  background: rgba(0, 0, 0, 0.3) !important;
-  border: 1px solid rgba(0, 212, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(80, 150, 220, 0.12) !important;
   box-shadow: none !important;
   transition: all 0.3s;
   border-radius: 10px !important;
@@ -552,21 +389,21 @@ export default {
 }
 
 .input-wrapper :deep(.el-input__wrapper:hover) {
-  border-color: rgba(0, 212, 255, 0.5) !important;
+  border-color: rgba(80, 150, 220, 0.35) !important;
 }
 
 .input-wrapper :deep(.el-input__wrapper.is-focus) {
-  border-color: #00d4ff !important;
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.2) !important;
+  border-color: #5b9bd5 !important;
+  box-shadow: 0 0 0 3px rgba(80, 150, 220, 0.1) !important;
 }
 
 .input-wrapper :deep(.el-input__inner) {
-  color: #ffffff !important;
+  color: #d6e8f8 !important;
   font-size: 14px;
 }
 
 .input-wrapper :deep(.el-input__inner::placeholder) {
-  color: rgba(255, 255, 255, 0.4) !important;
+  color: rgba(255, 255, 255, 0.3) !important;
 }
 
 .login-button {
@@ -574,17 +411,17 @@ export default {
   height: 48px;
   font-size: 16px;
   font-weight: 600;
-  background: linear-gradient(135deg, #00d4ff 0%, #0077ff 100%);
+  background: linear-gradient(135deg, #5b9bd5 0%, #2196f3 100%);
   border: none;
   border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(33, 150, 243, 0.3);
   transition: all 0.3s;
   letter-spacing: 2px;
 }
 
 .login-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(0, 212, 255, 0.6);
+  box-shadow: 0 6px 25px rgba(33, 150, 243, 0.5);
 }
 
 .login-button:active {
@@ -598,13 +435,13 @@ export default {
   gap: 8px;
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 1px solid rgba(0, 212, 255, 0.1);
-  color: rgba(255, 255, 255, 0.4);
+  border-top: 1px solid rgba(80, 150, 220, 0.08);
+  color: rgba(255, 255, 255, 0.3);
   font-size: 12px;
 }
 
 .login-footer .el-icon {
   font-size: 16px;
-  color: rgba(0, 212, 255, 0.5);
+  color: rgba(80, 150, 220, 0.4);
 }
 </style>

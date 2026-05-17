@@ -4,6 +4,12 @@ export const getWaterQualityByZone = (zoneId) => {
   return request.get(`/water-quality/zone/${zoneId}`)
 }
 
+export const getWaterQualityByRange = (zoneId, startTime, endTime) => {
+  return request.get(`/water-quality/zone/${zoneId}/range`, {
+    params: { startTime, endTime }
+  })
+}
+
 export const getLatestWaterQuality = (zoneId) => {
   return request.get(`/water-quality/zone/${zoneId}/latest`)
 }

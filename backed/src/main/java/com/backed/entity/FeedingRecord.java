@@ -1,6 +1,7 @@
 package com.backed.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -16,6 +17,12 @@ public class FeedingRecord {
     @TableField("zone_id")
     private Long zoneId;
 
+    @TableField("species")
+    private String species;
+
+    @TableField("batch_no")
+    private String batchNo;
+
     @TableField("feed_type")
     private String feedType;
 
@@ -23,6 +30,7 @@ public class FeedingRecord {
     private BigDecimal quantity;
 
     @TableField("feeding_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime feedingTime;
 
     @TableField("remarks")
