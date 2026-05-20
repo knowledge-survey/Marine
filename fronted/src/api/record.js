@@ -79,3 +79,35 @@ export const generateTraceabilityForBatch = (batchNo) => {
 export const getQrCodeUrl = (code) => {
   return `http://localhost:8080/api/traceability/qrcode/${code}`
 }
+
+export const getSeedlingInventories = (params) => {
+  return request.get('/seedling-inventory', { params })
+}
+
+export const createSeedlingInventory = (data) => {
+  return request.post('/seedling-inventory', data)
+}
+
+export const updateSeedlingInventory = (id, data) => {
+  return request.put(`/seedling-inventory/${id}`, data)
+}
+
+export const deleteSeedlingInventory = (id) => {
+  return request.delete(`/seedling-inventory/${id}`)
+}
+
+export const getMedicineInventories = (params) => {
+  return request.get('/medicine-inventory', { params })
+}
+
+export const createMedicineInventory = (data) => {
+  return request.post('/medicine-inventory', data)
+}
+
+export const updateMedicineInventory = (id, data) => {
+  return request.put(`/medicine-inventory/${id}`, data)
+}
+
+export const deleteMedicineInventory = (id) => {
+  return request.delete(`/medicine-inventory/${id}`)
+}

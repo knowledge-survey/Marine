@@ -52,4 +52,16 @@ public class UserService {
         userMapper.updateById(user);
         return user;
     }
+
+    public User updateAvatar(Long id, String avatarBase64) {
+        User user = findById(id).orElseThrow(() -> new RuntimeException("用户不存在"));
+        user.setAvatar(avatarBase64);
+        userMapper.updateById(user);
+        return user;
+    }
+
+    public String getAvatar(Long id) {
+        User user = findById(id).orElseThrow(() -> new RuntimeException("用户不存在"));
+        return user.getAvatar();
+    }
 }

@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/traceability")
-@CrossOrigin(origins = "*")
 public class TraceabilityCodeController {
 
     @Autowired

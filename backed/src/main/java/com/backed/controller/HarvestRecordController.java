@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/harvest")
-@CrossOrigin(origins = "*")
 public class HarvestRecordController {
 
     @Autowired

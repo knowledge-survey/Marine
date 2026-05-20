@@ -2,6 +2,7 @@ package com.backed.controller;
 
 import com.backed.entity.WaterQuality;
 import com.backed.entity.WaterQualityThreshold;
+import com.backed.service.OperationLogHelper;
 import com.backed.service.WaterQualityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,11 +14,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/water-quality")
-@CrossOrigin(origins = "*")
 public class WaterQualityController {
 
     @Autowired
     private WaterQualityService waterQualityService;
+    
+    @Autowired
+    private OperationLogHelper operationLogHelper;
 
     @GetMapping("/zone/{zoneId}")
     public ResponseEntity<List<WaterQuality>> getByZoneId(@PathVariable Long zoneId) {
@@ -52,29 +55,46 @@ public class WaterQualityController {
 
     @PostMapping
     public ResponseEntity<WaterQuality> createWaterQuality(@RequestBody WaterQuality waterQuality) {
-        return ResponseEntity.ok(waterQualityService.save(waterQuality));
+        ResponseEntity<WaterQuality> response = ResponseEntity.ok(waterQualityService.save(waterQuality));
+        if (response.getStatusCode().is2xxSuccessful()) {
+            operationLogHelper.log("水质管理", "新增水质数据", "POST", "zoneId=" + waterQuality.getZoneId());
+        }
+        return response;
     }
 
     @PostMapping("/threshold")
     public ResponseEntity<WaterQualityThreshold> createThreshold(@RequestBody WaterQualityThreshold threshold) {
-        return ResponseEntity.ok(waterQualityService.saveThreshold(threshold));
+        ResponseEntity<WaterQualityThreshold> response = ResponseEntity.ok(waterQualityService.saveThreshold(threshold));
+        if (response.getStatusCode().is2xxSuccessful()) {
+            operationLogHelper.log("水质管理", "配置水质阈值", "POST", "zoneId=" + threshold.getZoneId());
+        }
+        return response;
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<WaterQuality> updateWaterQuality(@PathVariable Long id, @RequestBody WaterQuality waterQuality) {
         waterQuality.setId(id);
-        return ResponseEntity.ok(waterQualityService.update(waterQuality));
+        ResponseEntity<WaterQuality> response = ResponseEntity.ok(waterQualityService.update(waterQuality));
+        if (response.getStatusCode().is2xxSuccessful()) {
+            operationLogHelper.log("水质管理", "更新水质数据", "PUT", "id=" + id);
+        }
+        return response;
     }
 
     @PutMapping("/threshold/{id}")
     public ResponseEntity<WaterQualityThreshold> updateThreshold(@PathVariable Long id, @RequestBody WaterQualityThreshold threshold) {
         threshold.setId(id);
-        return ResponseEntity.ok(waterQualityService.saveThreshold(threshold));
+        ResponseEntity<WaterQualityThreshold> response = ResponseEntity.ok(waterQualityService.saveThreshold(threshold));
+        if (response.getStatusCode().is2xxSuccessful()) {
+            operationLogHelper.log("水质管理", "更新水质阈值", "PUT", "id=" + id);
+        }
+        return response;
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWaterQuality(@PathVariable Long id) {
         waterQualityService.deleteById(id);
+        operationLogHelper.log("水质管理", "删除水质数据", "DELETE", "id=" + id);
         return ResponseEntity.ok().build();
     }
 }

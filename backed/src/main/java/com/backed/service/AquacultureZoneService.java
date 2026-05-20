@@ -1,7 +1,9 @@
 package com.backed.service;
 
 import com.backed.entity.AquacultureZone;
+import com.backed.entity.WaterQualityThreshold;
 import com.backed.mapper.AquacultureZoneMapper;
+import com.backed.mapper.WaterQualityThresholdMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,9 @@ public class AquacultureZoneService {
 
     @Autowired
     private AquacultureZoneMapper aquacultureZoneMapper;
+
+    @Autowired
+    private WaterQualityThresholdMapper thresholdMapper;
 
     public List<AquacultureZone> findAll() {
         return aquacultureZoneMapper.selectList(null);
@@ -48,5 +53,23 @@ public class AquacultureZoneService {
 
     public void deleteById(Long id) {
         aquacultureZoneMapper.deleteById(id);
+    }
+
+    public Optional<WaterQualityThreshold> getThreshold(Long zoneId) {
+        return thresholdMapper.findByZoneId(zoneId);
+    }
+
+    public WaterQualityThreshold saveThreshold(Long zoneId, WaterQualityThreshold threshold) {
+        Optional<WaterQualityThreshold> existing = thresholdMapper.findByZoneId(zoneId);
+        if (existing.isPresent()) {
+            WaterQualityThreshold old = existing.get();
+            threshold.setId(old.getId());
+            threshold.setZoneId(zoneId);
+            thresholdMapper.updateById(threshold);
+        } else {
+            threshold.setZoneId(zoneId);
+            thresholdMapper.insert(threshold);
+        }
+        return threshold;
     }
 }

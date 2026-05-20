@@ -1,31 +1,117 @@
-# 前端忽略
+# ================================================
+# 海洋养殖管理系统 - Git忽略文件
+# ================================================
+
+# ---------------- 数据库相关 ----------------
+# SQLite数据库文件
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# 数据库备份目录
+backups/
+
+# ---------------- 前端相关 ----------------
+# Node依赖
 node_modules/
+
+# 构建输出
 dist/
+
+# 环境变量文件
 .env
 .env.local
-.DS_Store
-*.log
+.env.*.local
+
+# 日志文件
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# 后端忽略
+# ---------------- 后端相关 ----------------
+# Gradle相关
 .gradle/
 build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-*.iml
-*.iws
-*.ipr
-out/
 
-# IDE 配置
+# 保留Gradle Wrapper
+!gradle/wrapper/gradle-wrapper.jar
+
+# Java编译输出
+out/
+*.class
+*.jar
+*.war
+*.ear
+target/
+
+# 临时文件
+*.tmp
+*.temp
+
+# ---------------- IDE配置 ----------------
+# IntelliJ IDEA
 .idea/
-.vscode/
+*.iws
+*.iml
+*.ipr
 *.swp
 *.swo
 
-# 系统文件
+# VS Code
+.vscode/
+*.code-workspace
+
+# Eclipse
+.classpath
+.project
+.settings/
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+
+# NetBeans
+nbproject/
+nbbuild/
+nbdist/
+.nb-gradle/
+
+# ---------------- 系统文件 ----------------
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
 Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ---------------- 临时文件 ----------------
+*.log
+*.log.*
+*.bak
+*.swp
+*.swo
+*~
+.cache/
+
+# ---------------- Trae IDE ----------------
+.trae/
+
+# ---------------- 其他 ----------------
+# 压缩文件
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# 上传文件（根据需要启用）
+uploads/
+temp/

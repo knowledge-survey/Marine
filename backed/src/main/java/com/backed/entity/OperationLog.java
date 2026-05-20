@@ -18,17 +18,29 @@ public class OperationLog {
     @TableField("username")
     private String username;
 
-    @TableField("operation")
-    private String operation;
-
     @TableField("module")
     private String module;
 
-    @TableField("description")
-    private String description;
+    @TableField("operation")
+    private String operation;
 
-    @TableField("ip")
-    private String ip;
+    @TableField("method")
+    private String method;
+
+    @TableField("params")
+    private String params;
+
+    @TableField("ip_address")
+    private String ipAddress;
+
+    @TableField("status")
+    private String status;
+
+    @TableField("error_msg")
+    private String errorMsg;
+
+    @TableField("execute_time")
+    private Integer executeTime;
 
     @TableField(value = "create_time", fill = FieldFill.INSERT)
     private LocalDateTime createTime;

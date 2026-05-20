@@ -28,10 +28,13 @@ public class User {
     private String email;
 
     @TableField("role")
-    private Role role = Role.FARMER;
+    private Role role = Role.BREEDER;
 
     @TableField("enabled")
     private Boolean enabled = true;
+
+    @TableField("avatar")
+    private String avatar;
 
     @TableField(value = "create_time", fill = FieldFill.INSERT)
     private LocalDateTime createTime;
@@ -40,6 +43,6 @@ public class User {
     private LocalDateTime updateTime;
 
     public enum Role {
-        FARMER, ADMIN, SUPER_ADMIN
+        BREEDER, MANAGER, OPERATOR, SUPER_ADMIN
     }
 }

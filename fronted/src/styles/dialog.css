@@ -1,5 +1,59 @@
 /* Element Plus Dialog 全局样式 - 处理 Teleport 到 body 的问题 */
 
+/* ===== 个人信息弹窗 - 深色科技风 ===== */
+.profile-dialog.el-dialog {
+  background: #0c1628 !important;
+  border: 1px solid rgba(80, 150, 220, 0.15) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7) !important;
+}
+.profile-dialog .el-dialog__header {
+  background: #0c1628 !important;
+  border-bottom: 1px solid rgba(80, 150, 220, 0.08) !important;
+  padding: 18px 24px 14px !important;
+  margin: 0 !important;
+}
+.profile-dialog .el-dialog__body {
+  background: #0c1628 !important;
+  padding: 20px 24px 24px !important;
+  color: #c0d8f0 !important;
+}
+.profile-dialog .el-dialog__headerbtn .el-dialog__close {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+.profile-dialog .el-dialog__headerbtn:hover .el-dialog__close {
+  color: #5b9bd5 !important;
+}
+
+/* ===== 用户下拉菜单 - 深色科技风 ===== */
+.user-dropdown.el-popper {
+  background: #0f1d30 !important;
+  border: 1px solid rgba(80, 150, 220, 0.12) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5) !important;
+}
+.user-dropdown.el-popper .el-popper__arrow::before {
+  background: #0f1d30 !important;
+  border-color: rgba(80, 150, 220, 0.12) !important;
+}
+.user-dropdown .el-dropdown-menu {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 8px !important;
+}
+.user-dropdown .el-dropdown-menu__item {
+  color: rgba(255, 255, 255, 0.7) !important;
+  border-radius: 8px;
+}
+.user-dropdown .el-dropdown-menu__item:hover {
+  background: rgba(80, 150, 220, 0.1) !important;
+  color: #c0d8f0 !important;
+}
+.user-dropdown .el-dropdown-menu__item--divided {
+  border-color: rgba(80, 150, 220, 0.08) !important;
+}
+
 /* 所有对话框共用的样式 */
 .add-dialog.el-dialog,
 .aquaculture-add-dialog.el-dialog,
@@ -204,4 +258,184 @@
 .aquaculture-add-dialog .el-button--primary:hover {
   box-shadow: 0 6px 20px rgba(0, 212, 255, 0.6) !important;
   transform: translateY(-1px);
+}
+
+/* ===== 区域管理弹窗 - 添加/编辑区域 ===== */
+.add-dialog.el-dialog,
+.threshold-dialog.el-dialog,
+.config-dialog.el-dialog {
+  background: #0c1628 !important;
+  border: 1px solid rgba(80, 150, 220, 0.15) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7) !important;
+}
+
+.add-dialog .el-dialog__header,
+.threshold-dialog .el-dialog__header,
+.config-dialog .el-dialog__header {
+  background: #0c1628 !important;
+  border-bottom: 1px solid rgba(80, 150, 220, 0.08) !important;
+  padding: 18px 24px 14px !important;
+  margin: 0 !important;
+}
+
+.add-dialog .el-dialog__body,
+.threshold-dialog .el-dialog__body,
+.config-dialog .el-dialog__body {
+  background: #0c1628 !important;
+  padding: 20px 24px 24px !important;
+  color: #c0d8f0 !important;
+}
+
+.add-dialog .el-dialog__footer,
+.threshold-dialog .el-dialog__footer,
+.config-dialog .el-dialog__footer {
+  background: #0c1628 !important;
+  padding: 0 24px 18px !important;
+  border-top: none !important;
+}
+
+.add-dialog .el-dialog__title,
+.threshold-dialog .el-dialog__title,
+.config-dialog .el-dialog__title {
+  color: #d6e8f8 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+.add-dialog .el-dialog__headerbtn .el-dialog__close,
+.threshold-dialog .el-dialog__headerbtn .el-dialog__close,
+.config-dialog .el-dialog__headerbtn .el-dialog__close {
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.add-dialog .el-dialog__headerbtn:hover .el-dialog__close,
+.threshold-dialog .el-dialog__headerbtn:hover .el-dialog__close,
+.config-dialog .el-dialog__headerbtn:hover .el-dialog__close {
+  color: #5b9bd5 !important;
+}
+
+/* 表单标签样式 */
+.add-dialog .el-form-item__label,
+.threshold-dialog .el-form-item__label,
+.config-dialog .el-form-item__label {
+  color: #a0c8e0 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+}
+
+/* 输入框样式 */
+.add-dialog .el-input__wrapper,
+.threshold-dialog .el-input__wrapper,
+.config-dialog .el-input__wrapper,
+.add-dialog .el-textarea__inner,
+.threshold-dialog .el-textarea__inner,
+.config-dialog .el-textarea__inner,
+.add-dialog .el-input-number .el-input__wrapper,
+.threshold-dialog .el-input-number .el-input__wrapper,
+.config-dialog .el-input-number .el-input__wrapper {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(80, 150, 220, 0.15) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+
+.add-dialog .el-input__wrapper:hover,
+.threshold-dialog .el-input__wrapper:hover,
+.config-dialog .el-input__wrapper:hover,
+.add-dialog .el-textarea__inner:hover,
+.threshold-dialog .el-textarea__inner:hover,
+.config-dialog .el-textarea__inner:hover,
+.add-dialog .el-input-number .el-input__wrapper:hover,
+.threshold-dialog .el-input-number .el-input__wrapper:hover,
+.config-dialog .el-input-number .el-input__wrapper:hover {
+  border-color: rgba(80, 150, 220, 0.3) !important;
+}
+
+.add-dialog .el-input__wrapper.is-focus,
+.threshold-dialog .el-input__wrapper.is-focus,
+.config-dialog .el-input__wrapper.is-focus,
+.add-dialog .el-textarea__inner:focus,
+.threshold-dialog .el-textarea__inner:focus,
+.config-dialog .el-textarea__inner:focus,
+.add-dialog .el-input-number .el-input__wrapper.is-focus,
+.threshold-dialog .el-input-number .el-input__wrapper.is-focus,
+.config-dialog .el-input-number .el-input__wrapper.is-focus {
+  border-color: #5b9bd5 !important;
+  box-shadow: 0 0 0 2px rgba(91, 155, 213, 0.15) !important;
+}
+
+.add-dialog .el-input__inner,
+.threshold-dialog .el-input__inner,
+.config-dialog .el-input__inner,
+.add-dialog .el-textarea__inner,
+.threshold-dialog .el-textarea__inner,
+.config-dialog .el-textarea__inner,
+.add-dialog .el-input-number .el-input__inner,
+.threshold-dialog .el-input-number .el-input__inner,
+.config-dialog .el-input-number .el-input__inner {
+  color: #d6e8f8 !important;
+  font-size: 14px !important;
+}
+
+.add-dialog .el-input__inner::placeholder,
+.threshold-dialog .el-input__inner::placeholder,
+.config-dialog .el-input__inner::placeholder,
+.add-dialog .el-textarea__inner::placeholder,
+.threshold-dialog .el-textarea__inner::placeholder,
+.config-dialog .el-textarea__inner::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 数字输入框增减按钮 */
+.add-dialog .el-input-number__decrease,
+.threshold-dialog .el-input-number__decrease,
+.config-dialog .el-input-number__decrease,
+.add-dialog .el-input-number__increase,
+.threshold-dialog .el-input-number__increase,
+.config-dialog .el-input-number__increase {
+  background-color: rgba(91, 155, 213, 0.1) !important;
+  color: #5b9bd5 !important;
+  border-color: rgba(91, 155, 213, 0.2) !important;
+}
+
+.add-dialog .el-input-number__decrease:hover,
+.threshold-dialog .el-input-number__decrease:hover,
+.config-dialog .el-input-number__decrease:hover,
+.add-dialog .el-input-number__increase:hover,
+.threshold-dialog .el-input-number__increase:hover,
+.config-dialog .el-input-number__increase:hover {
+  background-color: rgba(91, 155, 213, 0.2) !important;
+  color: #5b9bd5 !important;
+}
+
+/* 按钮样式 */
+.add-dialog .el-button,
+.threshold-dialog .el-button,
+.config-dialog .el-button {
+  border-radius: 8px !important;
+}
+
+.add-dialog .el-button--default,
+.threshold-dialog .el-button--default,
+.config-dialog .el-button--default {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #a0c8e0 !important;
+}
+
+.add-dialog .el-button--default:hover,
+.threshold-dialog .el-button--default:hover,
+.config-dialog .el-button--default:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: #d6e8f8 !important;
+}
+
+.add-dialog .el-button--primary,
+.threshold-dialog .el-button--primary,
+.config-dialog .el-button--primary {
+  background: linear-gradient(135deg, #5b9bd5, #2196f3) !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.25) !important;
 }

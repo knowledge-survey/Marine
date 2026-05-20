@@ -27,3 +27,11 @@ export const updateZone = (id, data) => {
 export const deleteZone = (id) => {
   return request.delete(`/zones/${id}`)
 }
+
+export const getZoneThreshold = (id) => {
+  return request.get(`/zones/${id}/threshold`)
+}
+
+export const saveZoneThreshold = (id, data) => {
+  return request.post(`/zones/${id}/threshold`, data)
+}

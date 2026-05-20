@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/seedlings")
-@CrossOrigin(origins = "*")
 public class SeedlingRecordController {
 
     @Autowired

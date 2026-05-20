@@ -14,10 +14,6 @@
           </div>
         </div>
         <div class="top-bar-right">
-          <el-button class="top-btn primary" @click="showAddDialog" size="small">
-            <el-icon><Plus /></el-icon>
-            <span class="top-btn-text">添加记录</span>
-          </el-button>
           <el-button class="top-btn" @click="loadData" :loading="loading" size="small">
             <el-icon><Refresh /></el-icon>
             <span class="top-btn-text">刷新</span>
@@ -186,59 +182,50 @@
               </span>
             </template>
             <div class="tab-body">
-              <div class="analysis-grid">
-                <div class="analysis-left">
-                  <div class="section-bar">
-                    <span class="bar-icon">📊</span>
-                    <span>指标分布</span>
-                  </div>
-                  <div ref="radarChartRef" class="chart-container-radar"></div>
+              <div class="section">
+                <div class="section-bar">
+                  <span class="bar-icon">📋</span>
+                  <span>指标详情</span>
                 </div>
-                <div class="analysis-right">
-                  <div class="section-bar">
-                    <span class="bar-icon">📋</span>
-                    <span>指标详情</span>
+                <div class="indicator-cards-row">
+                  <div class="indicator-card" style="--accent: #ff6b35">
+                    <div class="ic-color-dot"></div>
+                    <div class="ic-body">
+                      <span class="ic-label">水温</span>
+                      <span class="ic-value">{{ avgTemp }} <small>°C</small></span>
+                    </div>
+                    <div class="ic-bar-bg">
+                      <div class="ic-bar-fill" :style="{ width: calcPercent(avgTemp) }"></div>
+                    </div>
                   </div>
-                  <div class="indicator-cards">
-                    <div class="indicator-card" style="--accent: #ff6b35">
-                      <div class="ic-color-dot"></div>
-                      <div class="ic-body">
-                        <span class="ic-label">水温</span>
-                        <span class="ic-value">{{ avgTemp }} <small>°C</small></span>
-                      </div>
-                      <div class="ic-bar-bg">
-                        <div class="ic-bar-fill" :style="{ width: calcPercent(avgTemp) }"></div>
-                      </div>
+                  <div class="indicator-card" style="--accent: #00d4ff">
+                    <div class="ic-color-dot"></div>
+                    <div class="ic-body">
+                      <span class="ic-label">溶解氧</span>
+                      <span class="ic-value">{{ avgDo }} <small>mg/L</small></span>
                     </div>
-                    <div class="indicator-card" style="--accent: #00d4ff">
-                      <div class="ic-color-dot"></div>
-                      <div class="ic-body">
-                        <span class="ic-label">溶解氧</span>
-                        <span class="ic-value">{{ avgDo }} <small>mg/L</small></span>
-                      </div>
-                      <div class="ic-bar-bg">
-                        <div class="ic-bar-fill" :style="{ width: calcPercent(avgDo) }"></div>
-                      </div>
+                    <div class="ic-bar-bg">
+                      <div class="ic-bar-fill" :style="{ width: calcPercent(avgDo) }"></div>
                     </div>
-                    <div class="indicator-card" style="--accent: #00ff88">
-                      <div class="ic-color-dot"></div>
-                      <div class="ic-body">
-                        <span class="ic-label">pH值</span>
-                        <span class="ic-value">{{ avgPh }}</span>
-                      </div>
-                      <div class="ic-bar-bg">
-                        <div class="ic-bar-fill" :style="{ width: calcPercent(avgPh) }"></div>
-                      </div>
+                  </div>
+                  <div class="indicator-card" style="--accent: #00ff88">
+                    <div class="ic-color-dot"></div>
+                    <div class="ic-body">
+                      <span class="ic-label">pH值</span>
+                      <span class="ic-value">{{ avgPh }}</span>
                     </div>
-                    <div class="indicator-card" style="--accent: #ffcc00">
-                      <div class="ic-color-dot"></div>
-                      <div class="ic-body">
-                        <span class="ic-label">盐度</span>
-                        <span class="ic-value">{{ avgSalinity }}</span>
-                      </div>
-                      <div class="ic-bar-bg">
-                        <div class="ic-bar-fill" :style="{ width: calcPercent(avgSalinity) }"></div>
-                      </div>
+                    <div class="ic-bar-bg">
+                      <div class="ic-bar-fill" :style="{ width: calcPercent(avgPh) }"></div>
+                    </div>
+                  </div>
+                  <div class="indicator-card" style="--accent: #ffcc00">
+                    <div class="ic-color-dot"></div>
+                    <div class="ic-body">
+                      <span class="ic-label">盐度</span>
+                      <span class="ic-value">{{ avgSalinity }}</span>
+                    </div>
+                    <div class="ic-bar-bg">
+                      <div class="ic-bar-fill" :style="{ width: calcPercent(avgSalinity) }"></div>
                     </div>
                   </div>
                 </div>
@@ -303,9 +290,10 @@
                   <span>历史数据</span>
                 </div>
                 <div v-if="waterQualityList.length > 0" class="history-list">
-                  <div v-for="(group, dateKey) in groupedHistory" :key="dateKey" class="history-day-card">
-                    <div class="day-header">
+                  <div v-for="(group, dateKey) in groupedHistory" :key="dateKey" class="history-day-card" :class="{ collapsed: collapsedDays[dateKey] }">
+                    <div class="day-header" @click="toggleDay(dateKey)">
                       <div class="day-left">
+                        <el-icon class="collapse-icon" :size="14"><ArrowRight v-if="collapsedDays[dateKey]" /><ArrowDown v-else /></el-icon>
                         <span class="day-date">{{ group.date }}</span>
                         <el-tag :type="group.hasWarning ? 'danger' : 'success'" size="small" effect="dark">
                           {{ group.hasWarning ? '有异常' : '正常' }}
@@ -317,7 +305,7 @@
                         <span class="day-range">{{ group.minTemp }}° ~ {{ group.maxTemp }}°</span>
                       </div>
                     </div>
-                    <div class="day-records">
+                    <div class="day-records" v-show="!collapsedDays[dateKey]">
                       <div v-for="record in group.records" :key="record.id" class="record-item">
                         <div class="record-time">
                           <el-icon><Clock /></el-icon>
@@ -368,34 +356,10 @@
           </div>
         </div>
         <h2 class="welcome-h2">水质监测系统</h2>
-        <p class="welcome-p">请选择水域或添加水质记录开始监测</p>
-        <el-button class="welcome-btn" type="primary" size="large" round @click="showAddDialog">
-          <el-icon><Plus /></el-icon>
-          添加记录
-        </el-button>
+        <p class="welcome-p">请选择左侧养殖区域开始监测水质数据</p>
       </div>
     </div>
 
-    <el-dialog v-model="dialogVisible" title="添加水质记录" width="500px" class="add-dialog">
-      <el-form :model="form" label-width="100px" class="add-form">
-        <el-form-item label="水温">
-          <el-input-number v-model="form.temperature" :step="0.1" :min="0" :max="40" class="full-width" />
-        </el-form-item>
-        <el-form-item label="溶解氧">
-          <el-input-number v-model="form.dissolvedOxygen" :step="0.1" :min="0" :max="20" class="full-width" />
-        </el-form-item>
-        <el-form-item label="pH值">
-          <el-input-number v-model="form.ph" :step="0.1" :min="0" :max="14" class="full-width" />
-        </el-form-item>
-        <el-form-item label="盐度">
-          <el-input-number v-model="form.salinity" :step="0.1" :min="0" :max="50" class="full-width" />
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleAdd">确定</el-button>
-      </template>
-    </el-dialog>
   </div>
 </template>
 
@@ -403,29 +367,26 @@
 import { ref, watch, onMounted, nextTick, computed } from 'vue'
 import * as echarts from 'echarts'
 import {
-  Plus, Refresh, LocationFilled, ArrowDown, ArrowUp,
+  Refresh, LocationFilled, ArrowDown, ArrowUp, ArrowRight,
   Drizzling, Document, TrendCharts, CircleCheck, Calendar,
   Grid, DataLine, DataAnalysis, Clock, Sunny, Warning
 } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
-import { getWaterQualityByZone, getLatestWaterQuality, getWaterQualityByRange, createWaterQuality } from '@/api/waterQuality'
+import { getWaterQualityByZone, getLatestWaterQuality, getWaterQualityByRange } from '@/api/waterQuality'
 
 export default {
   name: 'WaterQuality',
   components: {
-    Plus, Refresh, LocationFilled, ArrowDown, ArrowUp,
+    Refresh, LocationFilled, ArrowDown, ArrowUp, ArrowRight,
     Drizzling, Document, TrendCharts, CircleCheck, Calendar,
     Grid, DataLine, DataAnalysis, Clock, Sunny, Warning
   },
   props: ['zoneId'],
   setup(props) {
     const trendChartRef = ref(null)
-    const radarChartRef = ref(null)
     const tempChartRef = ref(null)
     const doChartRef = ref(null)
 
     let trendChart = null
-    let radarChart = null
     let tempChart = null
     let doChart = null
 
@@ -433,14 +394,8 @@ export default {
     const waterQualityListForCharts = ref([])
     const latest = ref(null)
     const loading = ref(false)
-    const dialogVisible = ref(false)
     const activeTab = ref('trends')
-    const form = ref({
-      temperature: null,
-      dissolvedOxygen: null,
-      ph: null,
-      salinity: null
-    })
+    const collapsedDays = ref({})
 
     const updateTime = computed(() => {
       if (!latest.value) return ''
@@ -553,6 +508,10 @@ export default {
       return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
     }
 
+    const toggleDay = (dateKey) => {
+      collapsedDays.value[dateKey] = !collapsedDays.value[dateKey]
+    }
+
     const loadData = async () => {
       if (!props.zoneId) return
 
@@ -586,9 +545,6 @@ export default {
       if (trendChartRef.value) {
         trendChart = echarts.init(trendChartRef.value)
       }
-      if (radarChartRef.value) {
-        radarChart = echarts.init(radarChartRef.value)
-      }
       if (tempChartRef.value) {
         tempChart = echarts.init(tempChartRef.value)
       }
@@ -598,7 +554,6 @@ export default {
 
       window.addEventListener('resize', () => {
         trendChart?.resize()
-        radarChart?.resize()
         tempChart?.resize()
         doChart?.resize()
       })
@@ -636,7 +591,6 @@ export default {
 
     const updateCharts = () => {
       updateTrendChart()
-      updateRadarChart()
       updateTempChart()
       updateDoChart()
     }
@@ -752,112 +706,6 @@ export default {
       })
     }
 
-    const updateRadarChart = () => {
-      if (!radarChart) return
-
-      const dailyData = getDailyAverageData(waterQualityListForCharts.value)
-      if (dailyData.length === 0) return
-
-      const avgTemp = dailyData.reduce((sum, item) => sum + (parseFloat(item.temp) || 0), 0) / dailyData.length
-      const avgDo = dailyData.reduce((sum, item) => sum + (parseFloat(item.do) || 0), 0) / dailyData.length
-      const avgPh = dailyData.reduce((sum, item) => sum + (parseFloat(item.ph) || 0), 0) / dailyData.length
-      const avgSalinity = dailyData.reduce((sum, item) => sum + (parseFloat(item.salinity) || 0), 0) / dailyData.length
-
-      const maxTemp = Math.max(...dailyData.map(item => parseFloat(item.temp) || 0), avgTemp, 1)
-      const maxDo = Math.max(...dailyData.map(item => parseFloat(item.do) || 0), avgDo, 1)
-      const maxPh = Math.max(...dailyData.map(item => parseFloat(item.ph) || 0), avgPh, 1)
-      const maxSalinity = Math.max(...dailyData.map(item => parseFloat(item.salinity) || 0), avgSalinity, 1)
-
-      radarChart.setOption({
-        backgroundColor: 'transparent',
-        tooltip: {
-          trigger: 'item',
-          backgroundColor: 'rgba(20, 40, 60, 0.95)',
-          borderColor: '#5b9bd5',
-          borderWidth: 1,
-          padding: [10, 14],
-          textStyle: { color: '#fff', fontSize: 13 }
-        },
-        legend: {
-          data: ['平均值'],
-          textStyle: { color: 'rgba(255,255,255,0.7)' },
-          bottom: 0
-        },
-        radar: {
-          indicator: [
-            { name: '水温', max: Math.ceil(maxTemp * 1.2) },
-            { name: '溶解氧', max: Math.ceil(maxDo * 1.2) },
-            { name: 'pH值', max: Math.ceil(maxPh * 1.2) },
-            { name: '盐度', max: Math.ceil(maxSalinity * 1.2) }
-          ],
-          center: ['50%', '50%'],
-          radius: '65%',
-          shape: 'polygon',
-          splitNumber: 4,
-          axisName: {
-            color: 'rgba(255,255,255,0.85)',
-            fontSize: 14,
-            fontWeight: 600
-          },
-          splitLine: {
-            lineStyle: {
-              color: 'rgba(80, 150, 220, 0.2)'
-            }
-          },
-          splitArea: {
-            show: true,
-            areaStyle: {
-              color: [
-                'rgba(80, 150, 220, 0.05)',
-                'rgba(80, 150, 220, 0.02)',
-                'rgba(80, 150, 220, 0.05)',
-                'rgba(80, 150, 220, 0.02)'
-              ]
-            }
-          },
-          axisLine: {
-            lineStyle: {
-              color: 'rgba(80, 150, 220, 0.25)'
-            }
-          }
-        },
-        series: [
-          {
-            name: '水质指标',
-            type: 'radar',
-            data: [
-              {
-                value: [
-                  parseFloat(avgTemp.toFixed(2)),
-                  parseFloat(avgDo.toFixed(2)),
-                  parseFloat(avgPh.toFixed(2)),
-                  parseFloat(avgSalinity.toFixed(2))
-                ],
-                name: '平均值',
-                symbol: 'circle',
-                symbolSize: 8,
-                lineStyle: {
-                  color: '#5b9bd5',
-                  width: 2
-                },
-                itemStyle: {
-                  color: '#5b9bd5',
-                  borderColor: '#fff',
-                  borderWidth: 2
-                },
-                areaStyle: {
-                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                    { offset: 0, color: 'rgba(91, 155, 213, 0.4)' },
-                    { offset: 1, color: 'rgba(91, 155, 213, 0.1)' }
-                  ])
-                }
-              }
-            ]
-          }
-        ]
-      })
-    }
-
     const updateTempChart = () => {
       if (!tempChart) return
 
@@ -935,12 +783,12 @@ export default {
       const full7Days = []
       for (let i = 6; i >= 0; i--) {
         const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000)
-        const dateStr = `${date.getMonth() + 1}/${date.getDate()}$`
-        const existingData = dailyData.find(d => d.date === dateStr.replace('$', ''))
+        const dateStr = `${date.getMonth() + 1}/${date.getDate()}`
+        const existingData = dailyData.find(d => d.date === dateStr)
         if (existingData) {
           full7Days.push(existingData)
         } else {
-          full7Days.push({ date: dateStr.replace('$', ''), do: null })
+          full7Days.push({ date: dateStr, do: null })
         }
       }
 
@@ -994,26 +842,6 @@ export default {
       })
     }
 
-    const showAddDialog = () => {
-      form.value = { temperature: null, dissolvedOxygen: null, ph: null, salinity: null }
-      dialogVisible.value = true
-    }
-
-    const handleAdd = async () => {
-      try {
-        await createWaterQuality({
-          ...form.value,
-          zoneId: props.zoneId
-        })
-        dialogVisible.value = false
-        ElMessage.success('添加成功')
-        loadData()
-      } catch (error) {
-        console.error('添加失败:', error)
-        ElMessage.error('添加失败: ' + (error.response?.data?.message || error.message))
-      }
-    }
-
     watch(() => props.zoneId, () => {
       loadData()
     })
@@ -1024,15 +852,12 @@ export default {
 
     return {
       trendChartRef,
-      radarChartRef,
       tempChartRef,
       doChartRef,
       waterQualityList,
       latest,
       loading,
-      dialogVisible,
       activeTab,
-      form,
       updateTime,
       tempStatus,
       waterQualityStatus,
@@ -1048,11 +873,11 @@ export default {
       doTrend,
       doTrendColor,
       groupedHistory,
+      collapsedDays,
       formatTime,
+      toggleDay,
       calcPercent,
-      loadData,
-      showAddDialog,
-      handleAdd
+      loadData
     }
   }
 }
@@ -1361,100 +1186,9 @@ export default {
   color: rgba(255, 255, 255, 0.4);
 }
 
-.main-tabs {
-  padding: 0 28px;
-}
-
-.main-tabs :deep(.el-tabs__header) {
-  margin: 0;
-  border-bottom: 1px solid rgba(80, 150, 220, 0.08);
-}
-
-.main-tabs :deep(.el-tabs__nav-wrap::after) {
-  display: none;
-}
-
-.main-tabs :deep(.el-tabs__item) {
-  color: rgba(255, 255, 255, 0.4) !important;
-  font-size: 14px;
-  font-weight: 500;
-  height: 50px;
-  line-height: 50px;
-  padding: 0 28px;
-  transition: all 0.3s;
-}
-
-.main-tabs :deep(.el-tabs__item:hover) {
-  color: rgba(255, 255, 255, 0.7) !important;
-}
-
-.main-tabs :deep(.el-tabs__item.is-active) {
-  color: #5b9bd5 !important;
-  font-weight: 700;
-}
-
-.main-tabs :deep(.el-tabs__active-bar) {
-  background: linear-gradient(90deg, #2196f3, #5b9bd5);
-  height: 3px;
-  border-radius: 2px;
-}
-
-.tab-label {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.tab-label .el-icon { font-size: 16px; }
-
-.tab-body {
-  padding: 24px 0 8px;
-}
-
-.section {
-  margin-bottom: 32px;
-}
-
-.section-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #8cb8e0;
-}
-
-.section-bar .el-icon { font-size: 17px; }
-
-.bar-icon { font-size: 18px; }
-
-.chart-container-large {
-  height: 300px;
-  width: 100%;
-}
-
-.chart-container-radar {
-  height: 420px;
-  width: 100%;
-}
-
-.analysis-grid {
+.indicator-cards-row {
   display: grid;
-  grid-template-columns: 1.8fr 1fr;
-  gap: 12px;
-  margin-bottom: 32px;
-  align-items: start;
-}
-
-.analysis-left,
-.analysis-right {
-  min-width: 0;
-}
-
-.indicator-cards {
-  display: flex;
-  flex-direction: column;
+  grid-template-columns: repeat(4, 1fr);
   gap: 14px;
 }
 
@@ -1527,6 +1261,79 @@ export default {
   background: var(--accent);
   border-radius: 3px;
   transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.main-tabs {
+  padding: 0 28px;
+}
+
+.main-tabs :deep(.el-tabs__header) {
+  margin: 0;
+  border-bottom: 1px solid rgba(80, 150, 220, 0.08);
+}
+
+.main-tabs :deep(.el-tabs__nav-wrap::after) {
+  display: none;
+}
+
+.main-tabs :deep(.el-tabs__item) {
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 14px;
+  font-weight: 500;
+  height: 50px;
+  line-height: 50px;
+  padding: 0 28px;
+  transition: all 0.3s;
+}
+
+.main-tabs :deep(.el-tabs__item:hover) {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.main-tabs :deep(.el-tabs__item.is-active) {
+  color: #5b9bd5 !important;
+  font-weight: 700;
+}
+
+.main-tabs :deep(.el-tabs__active-bar) {
+  background: linear-gradient(90deg, #2196f3, #5b9bd5);
+  height: 3px;
+  border-radius: 2px;
+}
+
+.tab-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.tab-label .el-icon { font-size: 16px; }
+
+.tab-body {
+  padding: 24px 0 8px;
+}
+
+.section {
+  margin-bottom: 32px;
+}
+
+.section-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #8cb8e0;
+}
+
+.section-bar .el-icon { font-size: 17px; }
+
+.bar-icon { font-size: 18px; }
+
+.chart-container-large {
+  height: 300px;
+  width: 100%;
 }
 
 .double-charts {
@@ -1649,6 +1456,22 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  user-select: none;
+}
+.day-header:hover {
+  background: rgba(33, 120, 220, 0.1);
+}
+.history-day-card.collapsed .day-header {
+  border-radius: 16px;
+}
+.collapse-icon {
+  color: rgba(80, 150, 220, 0.6);
+  transition: transform 0.3s;
+}
+.history-day-card.collapsed .collapse-icon {
+  transform: rotate(0deg);
 }
 
 .day-left {
@@ -1819,8 +1642,7 @@ export default {
   .metrics-grid { grid-template-columns: repeat(2, 1fr); }
   .stats-cards { grid-template-columns: repeat(2, 1fr); }
   .double-charts { flex-direction: column; }
-  .analysis-grid { grid-template-columns: 1fr; }
-  .chart-container-radar { height: 320px; }
+  .indicator-cards-row { grid-template-columns: repeat(2, 1fr); }
   .top-btn-text { display: none; }
   .source-strip { display: none; }
   .top-bar { padding: 10px 16px; }
@@ -1835,6 +1657,7 @@ export default {
   .hero-metrics { grid-template-columns: repeat(2, 1fr); }
   .metrics-grid { grid-template-columns: 1fr; }
   .stats-cards { grid-template-columns: 1fr; }
+  .indicator-cards-row { grid-template-columns: 1fr; }
   .record-item { flex-direction: column; gap: 12px; align-items: flex-start; }
   .record-values { width: 100%; justify-content: space-between; gap: 8px; }
 }

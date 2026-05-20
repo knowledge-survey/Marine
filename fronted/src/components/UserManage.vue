@@ -18,7 +18,7 @@
         <el-table-column prop="phone" label="电话" min-width="160" />
         <el-table-column prop="role" label="角色" min-width="140">
           <template #default="{ row }">
-            <el-tag class="role-tag" :type="getRoleType(row.role)">{{ getRoleText(row.role) }}</el-tag>
+            <el-tag class="role-tag" :class="getRoleClass(row.role)">{{ getRoleText(row.role) }}</el-tag>
           </template>
         </el-table-column>
         <el-table-column prop="enabled" label="状态" min-width="100">
@@ -26,10 +26,11 @@
             <el-tag :type="row.enabled ? 'success' : 'danger'" class="status-tag">{{ row.enabled ? '启用' : '禁用' }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" min-width="180">
+        <el-table-column label="操作" min-width="260">
           <template #default="{ row }">
-            <el-button size="small" @click="handleToggle(row)">{{ row.enabled ? '禁用' : '启用' }}</el-button>
-            <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
+            <el-button size="small" @click="handleEdit(row)" v-if="canEdit(row)">编辑</el-button>
+            <el-button size="small" @click="handleToggle(row)" v-if="canEdit(row)">{{ row.enabled ? '禁用' : '启用' }}</el-button>
+            <el-button size="small" type="danger" @click="handleDelete(row)" v-if="canDelete(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -51,9 +52,10 @@
         </el-form-item>
         <el-form-item label="角色">
           <el-select v-model="form.role" class="full-width">
-            <el-option label="养殖人员" value="FARMER" />
-            <el-option label="管理员" value="ADMIN" />
-            <el-option label="超级管理员" value="SUPER_ADMIN" />
+            <el-option label="养殖人员" value="BREEDER" />
+            <el-option label="管理人员" value="MANAGER" />
+            <el-option label="系统运维人员" value="OPERATOR" v-if="isOperatorOrAboveUser" />
+            <el-option label="超级管理员" value="SUPER_ADMIN" v-if="isSuperAdminUser" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -66,10 +68,11 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { getUsers, createUser, updateUser, deleteUser, toggleUser } from '@/api/user'
 import { ElMessage } from 'element-plus'
 import { User, Plus } from '@element-plus/icons-vue'
+import { getRoleClass, getRoleLabel, isManagerOrAbove, isOperatorOrAbove, isSuperAdmin } from '@/utils/permission'
 
 export default {
   name: 'UserManage',
@@ -79,25 +82,62 @@ export default {
     const dialogVisible = ref(false)
     const isEdit = ref(false)
     const form = ref({})
+    
+    const storedUser = JSON.parse(localStorage.getItem('user'))
+    const isManagerOrAboveUser = computed(() => isManagerOrAbove(storedUser?.role))
+    const isOperatorOrAboveUser = computed(() => isOperatorOrAbove(storedUser?.role))
+    const isSuperAdminUser = computed(() => isSuperAdmin(storedUser?.role))
 
-    const getRoleType = (role) => { switch (role) { case 'SUPER_ADMIN': return 'danger'; case 'ADMIN': return 'warning'; default: return '' } }
-    const getRoleText = (role) => { switch (role) { case 'SUPER_ADMIN': return '超级管理员'; case 'ADMIN': return '管理员'; default: return '养殖人员' } }
+    const canEdit = (row) => {
+      if (isSuperAdminUser.value) return true
+      if (isOperatorOrAboveUser.value && row.role !== 'SUPER_ADMIN') return true
+      if (isManagerOrAboveUser.value && (row.role === 'BREEDER' || row.role === 'MANAGER')) return true
+      return false
+    }
+
+    const canDelete = (row) => {
+      if (row.role === 'SUPER_ADMIN') return false
+      if (isSuperAdminUser.value) return true
+      if (isOperatorOrAboveUser.value && row.role !== 'SUPER_ADMIN') return true
+      if (isManagerOrAboveUser.value && row.role === 'BREEDER') return true
+      return false
+    }
+
+    const getRoleText = (role) => getRoleLabel(role)
 
     const loadUsers = async () => { try { const res = await getUsers(); userList.value = res.data } catch (e) { console.error(e) } }
-    const showDialog = () => { isEdit.value = false; form.value = { username: '', password: '', realName: '', phone: '', role: 'FARMER' }; dialogVisible.value = true }
+    const showDialog = () => { isEdit.value = false; form.value = { username: '', password: '', realName: '', phone: '', role: 'BREEDER' }; dialogVisible.value = true }
+
+    const handleEdit = (row) => {
+      isEdit.value = true
+      form.value = { ...row, password: '' }
+      dialogVisible.value = true
+    }
 
     const handleSubmit = async () => {
+      if (!isOperatorOrAboveUser.value && (form.value.role === 'OPERATOR' || form.value.role === 'SUPER_ADMIN')) {
+        ElMessage.error('您没有权限设置该角色')
+        return
+      }
+      if (!isSuperAdminUser.value && form.value.role === 'SUPER_ADMIN') {
+        ElMessage.error('只有超级管理员可以设置超级管理员角色')
+        return
+      }
       try {
         if (isEdit.value) { await updateUser(form.value.id, form.value) } else { await createUser(form.value) }
         dialogVisible.value = false; ElMessage.success('操作成功'); loadUsers()
       } catch (e) { ElMessage.error('操作失败') }
     }
 
-    const handleToggle = async (row) => { try { await toggleUser(row.id); ElMessage.success('状态已更新'); loadUsers() } catch (e) { ElMessage.error('操作失败') } }
-    const handleDelete = async (row) => { try { if (confirm('确定删除该用户吗？')) { await deleteUser(row.id); ElMessage.success('删除成功'); loadUsers() } } catch (e) { ElMessage.error('删除失败') } }
+    const handleToggle = async (row) => { 
+      try { await toggleUser(row.id); ElMessage.success('状态已更新'); loadUsers() } catch (e) { ElMessage.error('操作失败') } 
+    }
+    const handleDelete = async (row) => { 
+      try { if (confirm('确定删除该用户吗？')) { await deleteUser(row.id); ElMessage.success('删除成功'); loadUsers() } } catch (e) { ElMessage.error('删除失败') } 
+    }
 
     onMounted(() => { loadUsers() })
-    return { userList, dialogVisible, isEdit, form, showDialog, handleSubmit, handleToggle, handleDelete, getRoleType, getRoleText }
+    return { userList, dialogVisible, isEdit, form, showDialog, handleEdit, handleSubmit, handleToggle, handleDelete, getRoleText, getRoleClass, isManagerOrAboveUser, isOperatorOrAboveUser, isSuperAdminUser, canEdit, canDelete }
   }
 }
 </script>
@@ -141,7 +181,11 @@ export default {
 .data-table :deep(.el-table__empty-block) { background: #0c1628 !important; }
 .data-table :deep(.el-table__empty-text) { color: rgba(255,255,255,0.4); }
 
-.role-tag, .status-tag { border-radius: 10px; padding: 2px 10px; font-weight: 500; }
+.role-tag, .status-tag { border-radius: 10px; padding: 2px 10px; font-weight: 500; border: none; }
+.role-tag.role-super { background: rgba(255, 107, 53, 0.15); color: #ff8a65; }
+.role-tag.role-operator { background: rgba(0, 212, 255, 0.15); color: #00d4ff; }
+.role-tag.role-manager { background: rgba(255, 204, 0, 0.15); color: #ffcc00; }
+.role-tag.role-breeder { background: rgba(0, 255, 136, 0.12); color: #00ff88; }
 .full-width { width: 100%; }
 </style>
 

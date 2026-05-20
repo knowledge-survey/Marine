@@ -85,13 +85,13 @@ export default {
     const form = ref({})
 
     const loadData = async () => {
-      if (!props.zoneId) return
-      try { const res = await getDiseasesByZone(props.zoneId); diseaseList.value = res.data } catch (e) { console.error(e) }
+      if (!props.zoneId) { diseaseList.value = []; return }
+      try { const res = await getDiseasesByZone(props.zoneId); diseaseList.value = Array.isArray(res.data) ? res.data : [] } catch (e) { console.error(e); diseaseList.value = [] }
     }
 
     const loadSeedlings = async () => {
-      if (!props.zoneId) return
-      try { const res = await getSeedlingsByZone(props.zoneId); seedlingList.value = res.data || [] } catch (e) { console.error(e) }
+      if (!props.zoneId) { seedlingList.value = []; return }
+      try { const res = await getSeedlingsByZone(props.zoneId); seedlingList.value = Array.isArray(res.data) ? res.data : [] } catch (e) { console.error(e); seedlingList.value = [] }
     }
 
     const handleBatchChange = (batchNo) => { const s = seedlingList.value.find(s => s.batchNo === batchNo); if (s) form.value.species = s.species }
