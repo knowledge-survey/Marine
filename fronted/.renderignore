@@ -1,0 +1,12 @@
+# 前端部署忽略文件
+# 这些文件不会被上传到 Render
+
+node_modules/
+.git/
+.gitignore
+README.md
+.DS_Store
+*.log
+.env
+.env.local
+.env.*.local

@@ -28,8 +28,8 @@ WORKDIR /app
 # 从构建阶段复制 jar 文件
 COPY --from=builder /app/build/libs/*.jar app.jar
 
-# 暴露端口
-EXPOSE 8081
+# 暴露端口（Render 推荐使用 10000）
+EXPOSE 10000
 
 # 设置 JVM 参数并运行
 ENTRYPOINT ["java", "-jar", "app.jar"]
