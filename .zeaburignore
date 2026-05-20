@@ -1,0 +1,38 @@
+# Zeabur 部署忽略文件
+
+# Git
+.git
+.gitignore
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# IDE
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# Database
+*.db
+*.sqlite
+backups/

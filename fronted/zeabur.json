@@ -1,0 +1,17 @@
+{
+  "version": "2.0",
+  "name": "marine-frontend",
+  "type": "static",
+  "build": {
+    "command": "npm install && npm run build",
+    "output": "dist"
+  },
+  "deploy": {
+    "rewrites": [
+      {
+        "source": "/(.*)",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

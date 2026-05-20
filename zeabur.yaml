@@ -1,0 +1,22 @@
+# Zeabur 部署配置
+# 文档: https://zeabur.com/docs
+
+services:
+  # 后端服务
+  - name: marine-backend
+    type: docker
+    template:
+      dockerfile: ./backed/Dockerfile
+      context: ./backed
+    env:
+      SERVER_PORT: 10000
+    region: hongkong
+
+  # 前端静态站点
+  - name: marine-frontend
+    type: static
+    template:
+      root: ./fronted
+      build: npm install && npm run build
+      output: dist
+    region: hongkong
