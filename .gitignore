@@ -19,6 +19,8 @@ dist/
 .env
 .env.local
 .env.*.local
+# 保留环境变量示例
+!.env.example
 
 # 日志文件
 npm-debug.log*

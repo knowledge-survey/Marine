@@ -1,0 +1,33 @@
+# Render 部署配置
+# 文档: https://render.com/docs/yaml-spec
+
+services:
+  # 后端服务
+  - type: web
+    name: marine-backend
+    env: docker
+    region: singapore
+    plan: free
+    dockerfilePath: ./backed/Dockerfile
+    autoDeploy: true
+    healthCheckPath: /
+    envVars:
+      - key: SERVER_PORT
+        value: 8081
+
+  # 前端静态站点
+  - type: web
+    name: marine-frontend
+    env: static
+    region: singapore
+    plan: free
+    buildCommand: cd fronted && npm install && npm run build
+    staticPublishPath: ./fronted/dist
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 18
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
